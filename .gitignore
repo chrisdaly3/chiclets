@@ -2,8 +2,9 @@
 *.db
 *.DB
 
-# Generated json marshallers
+# Workspace unrelated files
 *_easyjson.go
+.vscode*
 
 # Binaries for programs and plugins
 *.exe

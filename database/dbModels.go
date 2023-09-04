@@ -4,10 +4,10 @@ import "gorm.io/gorm"
 
 type Team struct {
 	gorm.Model
-	Name   string
-	Locale string
-	Record string
-	Roster []Player
+	TeamName   string
+	Locale     string
+	Conference string
+	Roster     []Player
 }
 
 type Player struct {

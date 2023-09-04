@@ -27,5 +27,5 @@ func ConnectDB() {
 	if err := db.AutoMigrate(&Team{}, &Player{}); err != nil {
 		panic("Failed to migrate DB models")
 	}
-	log.Println("Models migrated successfully, ")
+	log.Println("Models migrated successfully")
 }

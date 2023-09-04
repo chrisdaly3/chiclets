@@ -24,7 +24,7 @@ type UIModel struct {
 }
 
 // var headers will eventually be replaced by api call stats
-var headers = []string{"header1", "header2", "header3"}
+var headers = []string{"Team Name", "Locale", "Conference"}
 var InitModel = UIModel{view: homeNav, flex: flexbox.New(0, 0), table: table.NewTableSingleType[string](0, 0, headers)}
 
 func (ui *UIModel) Init() tea.Cmd { return nil }

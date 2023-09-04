@@ -15,17 +15,24 @@ import (
 )
 
 func main() {
-	database.ConnectDB()
 	allTeams := getTeams()
+	database.ConnectDB()
 
 	p := tea.NewProgram(&tui.InitModel, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error initializing tui: %v", err)
 	}
-	fmt.Println(allTeams)
+
+	// TODO: this is just in place for debug.
+	// I will remove it as I progress and can validate data
+	// in the db itself.
+	Flyers := allTeams[3].Get("@values")
+	fmt.Println(Flyers)
+	//CreateTeamDB(allTeams)
 }
 
-func getTeams() gjson.Result {
+func getTeams() []gjson.Result {
+	var teams []gjson.Result
 
 	response, err := http.Get(constants.TeamsURL)
 	if err != nil {
@@ -42,6 +49,20 @@ func getTeams() gjson.Result {
 		os.Exit(1)
 	}
 
-	teams := gjson.Get(string(responseBody), "teams.#.name")
+	// Check response for number of teams
+	responseTeamCount := gjson.GetBytes(responseBody, "teams.#")
+
+	// Use result of team number to iterate all team details
+	for i := 0; int64(i) < responseTeamCount.Int(); i++ {
+		teamIndex := fmt.Sprintf("teams.%v", i)
+		gjFields := fmt.Sprintf("{%s.teamName,%s.locationName,%s.division.name}.@join", teamIndex, teamIndex, teamIndex)
+
+		team := gjson.GetBytes(responseBody, gjFields)
+		teams = append(teams, team)
+	}
 	return teams
 }
+
+/*func CreateTeamDB(results []gjson.Result) error {
+
+}*/
