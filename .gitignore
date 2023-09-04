@@ -2,6 +2,9 @@
 *.db
 *.DB
 
+# Generated json marshallers
+*_easyjson.go
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
