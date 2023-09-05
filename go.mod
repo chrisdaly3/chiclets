@@ -5,7 +5,7 @@ go 1.21.0
 require (
 	github.com/76creates/stickers v1.3.1-0.20230410064447-c0cf398aec57
 	github.com/charmbracelet/bubbletea v0.24.1
-	github.com/tidwall/gjson v1.16.0
+	github.com/goccy/go-json v0.10.2
 	gorm.io/driver/sqlite v1.5.3
 	gorm.io/gorm v1.25.4
 )
@@ -14,8 +14,6 @@ require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
-	github.com/tidwall/match v1.1.1 // indirect
-	github.com/tidwall/pretty v1.2.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/text v0.3.8 // indirect
 )
