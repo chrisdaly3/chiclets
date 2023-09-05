@@ -5,7 +5,6 @@
 # Workspace unrelated files
 *_easyjson.go
 .vscode*
-*.log
 
 # Binaries for programs and plugins
 *.exe

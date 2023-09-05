@@ -11,21 +11,28 @@ import (
 	"github.com/chrisdaly3/chiclets/database"
 	"github.com/chrisdaly3/chiclets/tui"
 	"github.com/chrisdaly3/chiclets/tui/constants"
-	json "github.com/goccy/go-json"
+	"github.com/tidwall/gjson"
 )
 
 func main() {
-	nhlResponse := getTeams()
-	database.ConnectDB(nhlResponse)
+	allTeams := getTeams()
+	database.ConnectDB()
 
 	p := tea.NewProgram(&tui.InitModel, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error initializing tui: %v", err)
 	}
+
+	// TODO: this is just in place for debug.
+	// I will remove it as I progress and can validate data
+	// in the db itself.
+	Flyers := allTeams[3].Get("@values")
+	fmt.Println(Flyers)
+	//CreateTeamDB(allTeams)
 }
 
-func getTeams() database.NHLResponse {
-	var nhlResponse database.NHLResponse
+func getTeams() []gjson.Result {
+	var teams []gjson.Result
 
 	response, err := http.Get(constants.TeamsURL)
 	if err != nil {
@@ -42,9 +49,20 @@ func getTeams() database.NHLResponse {
 		os.Exit(1)
 	}
 
-	if err := json.Unmarshal(responseBody, &nhlResponse); err != nil {
-		slog.Error("Failure unmarshalling response body")
-		os.Exit(1)
+	// Check response for number of teams
+	responseTeamCount := gjson.GetBytes(responseBody, "teams.#")
+
+	// Use result of team number to iterate all team details
+	for i := 0; int64(i) < responseTeamCount.Int(); i++ {
+		teamIndex := fmt.Sprintf("teams.%v", i)
+		gjFields := fmt.Sprintf("{%s.teamName,%s.locationName,%s.division.name}.@join", teamIndex, teamIndex, teamIndex)
+
+		team := gjson.GetBytes(responseBody, gjFields)
+		teams = append(teams, team)
 	}
-	return nhlResponse
+	return teams
 }
+
+/*func CreateTeamDB(results []gjson.Result) error {
+
+}*/
