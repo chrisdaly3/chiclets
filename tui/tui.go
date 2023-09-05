@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/chrisdaly3/chiclets/data"
 )
 
 // view keeps track
@@ -23,9 +24,19 @@ type UIModel struct {
 	table *table.TableSingleType[string]
 }
 
-// var headers will eventually be replaced by api call stats
-var headers = []string{"Team Name", "Locale", "Conference"}
-var InitModel = UIModel{view: homeNav, flex: flexbox.New(0, 0), table: table.NewTableSingleType[string](0, 0, headers)}
+var headers = []string{"Locale", "Team Name", "Division"}
+var InitModel = UIModel{
+	view:  homeNav,
+	flex:  flexbox.New(0, 0),
+	table: table.NewTableSingleType[string](0, 0, headers),
+}
+var ratio = []int{4, 6, 4}
+var minSize = []int{5, 4, 8}
+
+func (ui *UIModel) PopulateTable() {
+	ui.table.SetRatio(ratio).SetMinWidth(minSize)
+	ui.table.AddRows(data.TeamsTable)
+}
 
 func (ui *UIModel) Init() tea.Cmd { return nil }
 
