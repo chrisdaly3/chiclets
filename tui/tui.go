@@ -27,21 +27,45 @@ type UIModel struct {
 	table *table.TableSingleType[string]
 }
 
-var headers = []string{"Locale", "Team Name", "Division"}
+var headers = []string{"ID", "Locale", "Team Name", "Division"}
 var InitModel = UIModel{
 	view:  homeNav,
 	flex:  flexbox.New(0, 0),
 	table: table.NewTableSingleType[string](0, 0, headers),
 }
-var ratio = []int{4, 6, 4}
-var minSize = []int{5, 4, 8}
+var ratio = []int{2, 4, 6, 4}
+var minSize = []int{2, 5, 4, 8}
 
 func (ui *UIModel) PopulateTable() {
 	ui.table.SetRatio(ratio).SetMinWidth(minSize)
 	ui.table.AddRows(data.TeamsTable)
 }
 
+// NOTE: THIS IS BRITTLE AS F*CK
+// If you change headers, these MUST be updated!!
 func (ui *UIModel) selected() tea.Msg {
+	column, _ := ui.table.GetCursorLocation()
+
+	//FIX: This is gross. Accept defeat.
+	// Either do not allow table sort (filter only)
+	// or start storing more table information
+	if column == 0 {
+		// Make API call to team stats by ID
+		fmt.Printf("Team ID: %s", ui.table.GetCursorValue())
+	} else if column == 1 {
+		ui.table.CursorLeft()
+
+	} else if column == 2 {
+		ui.table.CursorLeft()
+		ui.table.CursorLeft()
+		// make API call for team stats by ID
+
+	} else if column == 3 {
+		ui.table.CursorLeft()
+		ui.table.CursorLeft()
+		ui.table.CursorLeft()
+		// Make API call for division standings
+	}
 	return constants.SelectionMessage{}
 }
 
@@ -54,13 +78,9 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		ui.table.SetWidth(msg.Width)
 		ui.table.SetHeight(msg.Height - ui.flex.GetHeight())
 
-		// TODO: Either find a way to access values on position,
-		// OR uncover a better way to handle the selected item for stats
-		// on the teamNav view after selection. Might require some adjustments
-		// to the initial API response
 	case constants.SelectionMessage:
-		column, row := ui.table.GetCursorLocation()
-		fmt.Print(column, row)
+		//TODO: do stuff with SelectionMessage
+
 	// Add All Keybindings here
 	case tea.KeyMsg:
 		// might need to add conditional logic for view / state consideration here

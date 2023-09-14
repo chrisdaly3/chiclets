@@ -12,7 +12,7 @@ func sliceTeams(gj []gjson.Result) [][]string {
 
 	for _, t := range gj {
 		team := t.Map()
-		teamColumn := []string{team["locationName"].Str, team["teamName"].Str, team["name"].Str}
+		teamColumn := []string{team["id"].String(), team["locationName"].Str, team["teamName"].Str, team["name"].Str}
 		teamRows = append(teamRows, teamColumn)
 	}
 	return teamRows
