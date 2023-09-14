@@ -42,30 +42,13 @@ func (ui *UIModel) PopulateTable() {
 }
 
 // NOTE: THIS IS BRITTLE AS F*CK
-// If you change headers, these MUST be updated!!
+// If the first column changes, you MUST account for the ID elsewhere
 func (ui *UIModel) selected() tea.Msg {
-	column, _ := ui.table.GetCursorLocation()
+	_, row := ui.table.GetCursorLocation()
 
-	//FIX: This is gross. Accept defeat.
-	// Either do not allow table sort (filter only)
-	// or start storing more table information
-	if column == 0 {
-		// Make API call to team stats by ID
-		fmt.Printf("Team ID: %s", ui.table.GetCursorValue())
-	} else if column == 1 {
-		ui.table.CursorLeft()
+	// teamsTable[row][0] obtains the teamId for the highlighted row
+	fmt.Printf(data.TeamsTable[row][0])
 
-	} else if column == 2 {
-		ui.table.CursorLeft()
-		ui.table.CursorLeft()
-		// make API call for team stats by ID
-
-	} else if column == 3 {
-		ui.table.CursorLeft()
-		ui.table.CursorLeft()
-		ui.table.CursorLeft()
-		// Make API call for division standings
-	}
 	return constants.SelectionMessage{}
 }
 
