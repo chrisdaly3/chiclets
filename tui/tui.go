@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"unicode"
 
 	"github.com/76creates/stickers/flexbox"
 	"github.com/76creates/stickers/table"
@@ -36,9 +37,33 @@ var InitModel = UIModel{
 var ratio = []int{2, 4, 6, 4}
 var minSize = []int{2, 5, 4, 8}
 
+// PopulateTable fills the UIModel table with teams data
 func (ui *UIModel) PopulateTable() {
 	ui.table.SetRatio(ratio).SetMinWidth(minSize)
 	ui.table.AddRows(data.TeamsTable)
+}
+
+// searchTable accepts a tea.KeyMsg.Str() vand sets a columnar search query in model table.
+func (ui *UIModel) searchTable(key string) {
+	ind, str := ui.table.GetFilter()
+	posX, _ := ui.table.GetCursorLocation()
+	if posX != ind && key != "backspace" {
+		ui.table.SetFilter(posX, key)
+		return
+	}
+	if key == "backspace" {
+		if len(str) == 1 {
+			ui.table.UnsetFilter()
+			return
+		} else if len(str) > 1 {
+			str = str[0 : len(str)-1]
+		} else {
+			return
+		}
+	} else {
+		str += key
+	}
+	ui.table.SetFilter(ind, str)
 }
 
 // NOTE: THIS IS BRITTLE AS F*CK
@@ -83,11 +108,21 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, Keybindings.Right):
 			ui.table.CursorRight()
 
-		case key.Matches(msg, Keybindings.Search):
-			//TODO: Implement Search functionality
-
 		case key.Matches(msg, Keybindings.Select):
 			return ui, ui.selected
+
+		case key.Matches(msg, Keybindings.Back):
+			if _, s := ui.table.GetFilter(); s != "" {
+				ui.table.UnsetFilter()
+			}
+
+		case key.Matches(msg, Keybindings.Backspace):
+			ui.searchTable(msg.String())
+
+		default:
+			if len(msg.String()) == 1 && unicode.IsUpper(msg.Runes[0]) {
+				ui.searchTable(msg.String())
+			}
 		}
 	}
 	return ui, nil

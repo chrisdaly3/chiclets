@@ -7,14 +7,15 @@ import (
 /* KEYMAP */
 
 type keys struct {
-	Select key.Binding
-	Up     key.Binding
-	Down   key.Binding
-	Left   key.Binding
-	Right  key.Binding
-	Search key.Binding
-	Back   key.Binding
-	Quit   key.Binding
+	Select    key.Binding
+	Up        key.Binding
+	Down      key.Binding
+	Left      key.Binding
+	Right     key.Binding
+	Search    key.Binding
+	Backspace key.Binding
+	Back      key.Binding
+	Quit      key.Binding
 }
 
 var Keybindings = keys{
@@ -39,8 +40,11 @@ var Keybindings = keys{
 		key.WithHelp("▶/l", "right"),
 	),
 	Search: key.NewBinding(
-		key.WithKeys("/"),
-		key.WithHelp("/", "search"),
+		key.WithKeys("CAPSLOCK"),
+		key.WithHelp("CAPS", "search"),
+	),
+	Backspace: key.NewBinding(
+		key.WithKeys("backspace"),
 	),
 	Back: key.NewBinding(
 		key.WithKeys("esc"),

@@ -22,12 +22,12 @@ func getTeams() []gjson.Result {
 	}
 	defer response.Body.Close()
 	if response.StatusCode > 299 {
-		slog.Error("Unhealthy Response", "response", response.Body)
+		slog.Error("Unhealthy Response", "response:", response.Body, "statusCode:", response.StatusCode)
 	}
 
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		slog.Error("Failure reading json response body")
+		slog.Error("Read Error", "err:", err)
 		os.Exit(1)
 	}
 
