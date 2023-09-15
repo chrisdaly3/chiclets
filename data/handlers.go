@@ -16,7 +16,7 @@ var AllTeams = getTeams()
 func getTeams() []gjson.Result {
 	var teams []gjson.Result
 
-	response, err := http.Get(constants.TeamsURL)
+	response, err := http.Get(constants.TEAMSURL)
 	if err != nil {
 		fmt.Printf("Error communicating with NHL API: %v", err)
 	}
