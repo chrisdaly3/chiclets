@@ -83,6 +83,9 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, Keybindings.Right):
 			ui.table.CursorRight()
 
+		case key.Matches(msg, Keybindings.Search):
+			//TODO: Implement Search functionality
+
 		case key.Matches(msg, Keybindings.Select):
 			return ui, ui.selected
 		}

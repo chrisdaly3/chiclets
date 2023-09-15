@@ -12,6 +12,7 @@ type keys struct {
 	Down   key.Binding
 	Left   key.Binding
 	Right  key.Binding
+	Search key.Binding
 	Back   key.Binding
 	Quit   key.Binding
 }
@@ -36,6 +37,10 @@ var Keybindings = keys{
 	Right: key.NewBinding(
 		key.WithKeys("right", "l"),
 		key.WithHelp("▶/l", "right"),
+	),
+	Search: key.NewBinding(
+		key.WithKeys("/"),
+		key.WithHelp("/", "search"),
 	),
 	Back: key.NewBinding(
 		key.WithKeys("esc"),
