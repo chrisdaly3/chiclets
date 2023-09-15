@@ -71,7 +71,8 @@ func (ui *UIModel) searchTable(key string) {
 func (ui *UIModel) selected() tea.Msg {
 	_, row := ui.table.GetCursorLocation()
 
-	// teamsTable[row][0] obtains the teamId for the highlighted row
+	// FIX: With Filtering, teamId capture no longer works!
+	// find a way to get column 0 value realtime
 	fmt.Printf(data.TeamsTable[row][0])
 
 	return constants.SelectionMessage{}
