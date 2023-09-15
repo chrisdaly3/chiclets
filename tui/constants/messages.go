@@ -1,3 +1,5 @@
 package constants
 
-type SelectionMessage struct{}
+type SelectionMessage struct {
+	Value string
+}

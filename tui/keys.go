@@ -55,3 +55,18 @@ var Keybindings = keys{
 		key.WithHelp("q/ctrl+c", "quit!"),
 	),
 }
+
+// HelpText relies on the key.WithHelp key.
+// String formatting as follows
+// Up, Down, Left, Right,
+// Select,
+// Search,
+// Back,
+// Quit
+var HelpText = `
+  Movement: %s, %s, %s, %s,
+  Select: %s,
+  Filter in Column: %s,
+  Remove Filter: %s,
+  Quit: %s
+  `

@@ -8,9 +8,9 @@ import (
 	"github.com/76creates/stickers/table"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/chrisdaly3/chiclets/data"
 	"github.com/chrisdaly3/chiclets/tui/constants"
+	"github.com/chrisdaly3/chiclets/tui/styles"
 )
 
 // view keeps track
@@ -31,16 +31,44 @@ type UIModel struct {
 var headers = []string{"ID", "Locale", "Team Name", "Division"}
 var InitModel = UIModel{
 	view:  homeNav,
-	flex:  flexbox.New(0, 0),
+	flex:  flexbox.New(0, 0).SetStyle(styles.FlexStyleWhite),
 	table: table.NewTableSingleType[string](0, 0, headers),
 }
-var ratio = []int{2, 4, 6, 4}
-var minSize = []int{2, 5, 4, 8}
+var ratio = []int{1, 10, 10, 5}
+var minSize = []int{2, 5, 5, 5}
 
 // PopulateTable fills the UIModel table with teams data
 func (ui *UIModel) PopulateTable() {
 	ui.table.SetRatio(ratio).SetMinWidth(minSize)
-	ui.table.AddRows(data.TeamsTable)
+	ui.table.AddRows(data.TeamsTable).SetStylePassing(true)
+	r1 := ui.flex.NewRow().AddCells(
+		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
+		flexbox.NewCell(6, 5).SetStyle(styles.FlexStyleBackground),
+		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
+	)
+
+	r2 := ui.flex.NewRow().AddCells(
+		flexbox.NewCell(5, 5).SetStyle(styles.FlexStyleOrange),
+		flexbox.NewCell(10, 5).SetStyle(styles.FlexStyleBlank),
+		flexbox.NewCell(5, 5).SetStyle(styles.FlexStyleOrange),
+	)
+
+	r3 := ui.flex.NewRow().AddCells(
+		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
+		flexbox.NewCell(6, 5).SetStyle(styles.FlexStyleViolet).
+			SetContent(styles.FlexStyleText.Render(fmt.Sprintf(HelpText,
+				Keybindings.Up.Help().Key,
+				Keybindings.Down.Help().Key,
+				Keybindings.Left.Help().Key,
+				Keybindings.Right.Help().Key,
+				Keybindings.Select.Help().Key,
+				Keybindings.Search.Help().Key,
+				Keybindings.Back.Help().Key,
+				Keybindings.Quit.Help().Key))),
+		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
+	)
+	flexRows := []*flexbox.Row{r1, r2, r3}
+	ui.flex.AddRows(flexRows)
 }
 
 // searchTable accepts a tea.KeyMsg.Str() vand sets a columnar search query in model table.
@@ -69,11 +97,18 @@ func (ui *UIModel) searchTable(key string) {
 // NOTE: THIS IS BRITTLE AS F*CK
 // If the first column changes, you MUST account for the ID elsewhere
 func (ui *UIModel) selected() tea.Msg {
-	_, row := ui.table.GetCursorLocation()
-
-	// FIX: With Filtering, teamId capture no longer works!
-	// find a way to get column 0 value realtime
-	fmt.Printf(data.TeamsTable[row][0])
+	column, _ := ui.table.GetCursorLocation()
+	switch column {
+	case 1:
+		ui.table.CursorLeft()
+	case 2:
+		ui.table.CursorLeft()
+		ui.table.CursorLeft()
+	case 3:
+		ui.table.CursorLeft()
+		ui.table.CursorLeft()
+		ui.table.CursorLeft()
+	}
 
 	return constants.SelectionMessage{}
 }
@@ -84,6 +119,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		ui.flex.SetWidth(msg.Width)
+		ui.flex.SetHeight(msg.Height)
 		ui.table.SetWidth(msg.Width)
 		ui.table.SetHeight(msg.Height - ui.flex.GetHeight())
 
@@ -130,5 +166,11 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (ui *UIModel) View() string {
-	return lipgloss.JoinVertical(lipgloss.Left, ui.flex.Render(), ui.table.Render())
+	ui.flex.ForceRecalculate()
+	_r := ui.flex.GetRow(1)
+	_c := _r.GetCell(1)
+	ui.table.SetWidth(_c.GetWidth())
+	ui.table.SetHeight(_c.GetHeight())
+	_c.SetContent(ui.table.Render())
+	return ui.flex.Render()
 }
