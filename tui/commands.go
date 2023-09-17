@@ -1,15 +1,15 @@
 package tui
 
 import (
-	"encoding/json"
 	"fmt"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/chrisdaly3/chiclets/data"
-	"github.com/chrisdaly3/chiclets/tui/constants"
 	"io"
 	"log/slog"
 	"net/http"
 	"os"
+
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/chrisdaly3/chiclets/tui/constants"
+	"github.com/tidwall/gjson"
 )
 
 // If the first column changes, you MUST account for the ID elsewhere
@@ -51,10 +51,26 @@ func (ui *UIModel) GetRosterCmd() tea.Msg {
 		os.Exit(1)
 	}
 
-	var Roster data.RosterResponse
-	json.Unmarshal(responseBody, &Roster)
+	TotalPlayerCount := gjson.GetBytes(responseBody, "teams.0.roster.roster.#")
+	var allPlayers []gjson.Result
+	var PlayerRows [][]string
+	for i := 0; int64(i) < TotalPlayerCount.Int(); i++ {
+		playerFields := fmt.Sprintf(
+			"{teams.0.roster.roster.%v.person.id,teams.0.roster.roster.%v.person.fullName,teams.0.roster.roster.%v.position.name,teams.0.roster.roster.%v.jerseyNumber}.@join",
+			i, // PlayerId
+			i, // PlayerName
+			i, // PlayerPosition
+			i, // PlayerNumber
+		)
+		player := gjson.GetBytes(responseBody, playerFields)
+		allPlayers = append(allPlayers, player)
+	}
+	for _, p := range allPlayers {
+		player := p.Map()
+		playerColumn := []string{player["id"].String(), player["fullName"].String(), player["name"].String(), player["jerseyNumber"].String()}
+		PlayerRows = append(PlayerRows, playerColumn)
+	}
 
-	//FIX: TestData for now. Should eventually populate with
-	// newTeamTable data
-	return constants.RosterMessage{Test: Roster.Teams[0].Name}
+	PlayerTable := NewTeamTable(PlayerRows)
+	return constants.RosterMessage{Table: PlayerTable}
 }

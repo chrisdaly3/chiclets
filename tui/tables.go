@@ -43,14 +43,11 @@ func (ui *UIModel) NewLeagueTable() {
 	ui.flex.AddRows(flexRows)
 }
 
-// NewTeamTable fills the UI table with data
-// dependent on SelectionMessage
-func NewTeamTable() *table.TableSingleType[string] {
-	var Roster = table.NewTableSingleType[string](0, 0, TeamHeaders)
-	Roster.SetRatio(ratio).SetMinWidth(minSize)
-	var RosterRows = [][]string{[]string{"player1ID", "Player1Name", "Player1Position", "Player1Number"},
-		[]string{"player2ID", "Player2Name", "Player2Position", "Player2Number"}}
-	//TODO: AddRows based on Team Roster API response
-	Roster.AddRows(RosterRows)
-	return Roster
+// NewTeamTable is a helper function called by the GetRosterCmd
+// to populate a new table with Team Roster data
+func NewTeamTable(rows [][]string) *table.TableSingleType[string] {
+	var RosterTable = table.NewTableSingleType[string](0, 0, TeamHeaders)
+	RosterTable.SetRatio(ratio).SetMinWidth(minSize)
+	RosterTable.AddRows(rows)
+	return RosterTable
 }

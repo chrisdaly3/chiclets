@@ -11,5 +11,5 @@ type SelectionMessage struct {
 type RosterMessage struct {
 	Table   *table.TableSingleType[string]
 	Players [][]string
-	Test    string
+	Test    []string
 }

@@ -46,7 +46,7 @@ var InitModel = UIModel{
 	table: table.NewTableSingleType[string](0, 0, HomeHeaders),
 }
 
-var ratio = []int{1, 10, 10, 5}
+var ratio = []int{3, 8, 8, 5}
 var minSize = []int{2, 5, 5, 5}
 
 // searchTable accepts a tea.KeyMsg.Str() vand sets a columnar search query in model table.
@@ -90,7 +90,10 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case constants.RosterMessage:
-		fmt.Printf("Tested Data is: %s", msg.Test)
+		if ui.view == homeNav {
+			ui.view = teamNav
+			ui.table = msg.Table
+		}
 
 	// Add All Keybindings here
 	case tea.KeyMsg:
