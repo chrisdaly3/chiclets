@@ -90,7 +90,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case constants.RosterMessage:
-		fmt.Printf("URL is %s: ", msg.URL)
+		fmt.Printf("Tested Data is: %s", msg.Test)
 
 	// Add All Keybindings here
 	case tea.KeyMsg:
