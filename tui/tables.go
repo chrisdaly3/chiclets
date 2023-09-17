@@ -21,7 +21,7 @@ func (ui *UIModel) NewLeagueTable() {
 
 	r2 := ui.flex.NewRow().AddCells(
 		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleOrange),
-		flexbox.NewCell(10, 8).SetStyle(styles.FlexStyleTableBackground),
+		flexbox.NewCell(10, 8).SetStyle(styles.FlexStyleBlank),
 		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleOrange),
 	)
 
