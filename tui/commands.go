@@ -51,9 +51,11 @@ func (ui *UIModel) GetRosterCmd() tea.Msg {
 		os.Exit(1)
 	}
 
+	// ROSTER COLLECTION from NHL API
 	TotalPlayerCount := gjson.GetBytes(responseBody, "teams.0.roster.roster.#")
 	var allPlayers []gjson.Result
 	var PlayerRows [][]string
+
 	for i := 0; int64(i) < TotalPlayerCount.Int(); i++ {
 		playerFields := fmt.Sprintf(
 			"{teams.0.roster.roster.%v.person.id,teams.0.roster.roster.%v.person.fullName,teams.0.roster.roster.%v.position.name,teams.0.roster.roster.%v.jerseyNumber}.@join",
@@ -72,5 +74,7 @@ func (ui *UIModel) GetRosterCmd() tea.Msg {
 	}
 
 	PlayerTable := NewTeamTable(PlayerRows)
+
+	// Returns a message to the UI to update the table view
 	return constants.RosterMessage{Table: PlayerTable}
 }
