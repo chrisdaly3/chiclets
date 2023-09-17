@@ -42,12 +42,12 @@ var TeamHeaders = []string{"ID", "Player", "Position", "Number"}
 
 var InitModel = UIModel{
 	view:  homeNav,
-	flex:  flexbox.New(0, 0).SetStyle(styles.FlexStyleWhite),
+	flex:  flexbox.New(0, 0).StylePassing(true),
 	table: table.NewTableSingleType[string](0, 0, HomeHeaders),
 }
 
-var ratio = []int{3, 8, 8, 5}
-var minSize = []int{2, 5, 5, 5}
+var ratio = []int{25, 50, 50, 65}
+var minSize = []int{5, 5, 5, 5}
 
 // searchTable accepts a tea.KeyMsg.Str() vand sets a columnar search query in model table.
 func (ui *UIModel) searchTable(key string) {
@@ -138,6 +138,7 @@ func (ui *UIModel) View() string {
 	ui.flex.ForceRecalculate()
 	_r := ui.flex.GetRow(1)
 	_c := _r.GetCell(1)
+	ui.table.SetStyles(styles.TableStyles)
 	ui.table.SetWidth(_c.GetWidth())
 	ui.table.SetHeight(_c.GetHeight())
 	_c.SetContent(ui.table.Render())

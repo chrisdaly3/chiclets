@@ -12,23 +12,23 @@ import (
 // NewLeagueTable fills the UIModel table with teams data
 func (ui *UIModel) NewLeagueTable() {
 	ui.table.SetRatio(ratio).SetMinWidth(minSize)
-	ui.table.AddRows(data.TeamsTable).SetStylePassing(true)
+	ui.table.AddRows(data.TeamsTable)
 	r1 := ui.flex.NewRow().AddCells(
-		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
-		flexbox.NewCell(6, 5).SetStyle(styles.FlexStyleBackground),
-		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
+		flexbox.NewCell(3, 2),
+		flexbox.NewCell(6, 3).SetStyle(styles.FlexStyleBackground),
+		flexbox.NewCell(3, 2),
 	)
 
 	r2 := ui.flex.NewRow().AddCells(
-		flexbox.NewCell(5, 5).SetStyle(styles.FlexStyleOrange),
-		flexbox.NewCell(10, 5).SetStyle(styles.FlexStyleBlank),
-		flexbox.NewCell(5, 5).SetStyle(styles.FlexStyleOrange),
+		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleOrange),
+		flexbox.NewCell(10, 8).SetStyle(styles.FlexStyleTableBackground),
+		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleOrange),
 	)
 
 	r3 := ui.flex.NewRow().AddCells(
-		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
-		flexbox.NewCell(6, 5).SetStyle(styles.FlexStyleViolet).
-			SetContent(styles.FlexStyleText.Render(fmt.Sprintf(HelpText,
+		flexbox.NewCell(3, 2),
+		flexbox.NewCell(6, 3).SetStyle(styles.FlexStyleIce).
+			SetContent(fmt.Sprintf(HelpText,
 				Keybindings.Up.Help().Key,
 				Keybindings.Down.Help().Key,
 				Keybindings.Left.Help().Key,
@@ -36,8 +36,8 @@ func (ui *UIModel) NewLeagueTable() {
 				Keybindings.Select.Help().Key,
 				Keybindings.Search.Help().Key,
 				Keybindings.Esc.Help().Key,
-				Keybindings.Quit.Help().Key))),
-		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
+				Keybindings.Quit.Help().Key)),
+		flexbox.NewCell(3, 2),
 	)
 	flexRows := []*flexbox.Row{r1, r2, r3}
 	ui.flex.AddRows(flexRows)
