@@ -8,13 +8,12 @@ import (
 	"github.com/76creates/stickers/table"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/chrisdaly3/chiclets/data"
 	"github.com/chrisdaly3/chiclets/tui/constants"
 	"github.com/chrisdaly3/chiclets/tui/styles"
 )
 
-// view keeps track
-// of what we're "focused" on
+// type view tracks what HTML to render
+// either All Team info, or Team Stat Data
 type view int
 
 const (
@@ -28,48 +27,27 @@ type UIModel struct {
 	table *table.TableSingleType[string]
 }
 
-var headers = []string{"ID", "Locale", "Team Name", "Division"}
+// Table Headers dependent on view
+func (ui *UIModel) getHeaders() []string {
+	if ui.view == homeNav {
+		return HomeHeaders
+	} else if ui.view == teamNav {
+		return TeamHeaders
+	}
+	return []string{"HEADERS", "NOT", "SET", "ERROR"}
+}
+
+var HomeHeaders = []string{"ID", "Locale", "Team Name", "Division"}
+var TeamHeaders = []string{"ID", "Player", "Position", "Number"}
+
 var InitModel = UIModel{
 	view:  homeNav,
 	flex:  flexbox.New(0, 0).SetStyle(styles.FlexStyleWhite),
-	table: table.NewTableSingleType[string](0, 0, headers),
+	table: table.NewTableSingleType[string](0, 0, HomeHeaders),
 }
+
 var ratio = []int{1, 10, 10, 5}
 var minSize = []int{2, 5, 5, 5}
-
-// PopulateTable fills the UIModel table with teams data
-func (ui *UIModel) PopulateTable() {
-	ui.table.SetRatio(ratio).SetMinWidth(minSize)
-	ui.table.AddRows(data.TeamsTable).SetStylePassing(true)
-	r1 := ui.flex.NewRow().AddCells(
-		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
-		flexbox.NewCell(6, 5).SetStyle(styles.FlexStyleBackground),
-		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
-	)
-
-	r2 := ui.flex.NewRow().AddCells(
-		flexbox.NewCell(5, 5).SetStyle(styles.FlexStyleOrange),
-		flexbox.NewCell(10, 5).SetStyle(styles.FlexStyleBlank),
-		flexbox.NewCell(5, 5).SetStyle(styles.FlexStyleOrange),
-	)
-
-	r3 := ui.flex.NewRow().AddCells(
-		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
-		flexbox.NewCell(6, 5).SetStyle(styles.FlexStyleViolet).
-			SetContent(styles.FlexStyleText.Render(fmt.Sprintf(HelpText,
-				Keybindings.Up.Help().Key,
-				Keybindings.Down.Help().Key,
-				Keybindings.Left.Help().Key,
-				Keybindings.Right.Help().Key,
-				Keybindings.Select.Help().Key,
-				Keybindings.Search.Help().Key,
-				Keybindings.Back.Help().Key,
-				Keybindings.Quit.Help().Key))),
-		flexbox.NewCell(3, 5).SetStyle(styles.FlexStyleNavy),
-	)
-	flexRows := []*flexbox.Row{r1, r2, r3}
-	ui.flex.AddRows(flexRows)
-}
 
 // searchTable accepts a tea.KeyMsg.Str() vand sets a columnar search query in model table.
 func (ui *UIModel) searchTable(key string) {
@@ -125,6 +103,9 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case constants.SelectionMessage:
 		//TODO: do stuff with SelectionMessage
+		ui.view = teamNav
+		ui.table = ui.NewTeamTable()
+		fmt.Printf("ID: %s", ui.table.GetCursorValue())
 
 	// Add All Keybindings here
 	case tea.KeyMsg:
@@ -148,7 +129,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, Keybindings.Select):
 			return ui, ui.selected
 
-		case key.Matches(msg, Keybindings.Back):
+		case key.Matches(msg, Keybindings.Esc):
 			if _, s := ui.table.GetFilter(); s != "" {
 				ui.table.UnsetFilter()
 			}

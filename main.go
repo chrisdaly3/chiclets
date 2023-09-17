@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	tui.InitModel.PopulateTable()
+	tui.InitModel.NewLeagueTable()
 
 	p := tea.NewProgram(&tui.InitModel, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {

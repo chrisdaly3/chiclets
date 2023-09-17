@@ -14,7 +14,7 @@ type keys struct {
 	Right     key.Binding
 	Search    key.Binding
 	Backspace key.Binding
-	Back      key.Binding
+	Esc       key.Binding
 	Quit      key.Binding
 }
 
@@ -46,9 +46,9 @@ var Keybindings = keys{
 	Backspace: key.NewBinding(
 		key.WithKeys("backspace"),
 	),
-	Back: key.NewBinding(
+	Esc: key.NewBinding(
 		key.WithKeys("esc"),
-		key.WithHelp("esc", "go back"),
+		key.WithHelp("esc", "remove filter"),
 	),
 	Quit: key.NewBinding(
 		key.WithKeys("ctrl+c", "q"),
@@ -61,7 +61,7 @@ var Keybindings = keys{
 // Up, Down, Left, Right,
 // Select,
 // Search,
-// Back,
+// Esc,
 // Quit
 var HelpText = `
   Movement: %s, %s, %s, %s,
