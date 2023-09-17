@@ -72,25 +72,6 @@ func (ui *UIModel) searchTable(key string) {
 	ui.table.SetFilter(ind, str)
 }
 
-// NOTE: THIS IS BRITTLE AS F*CK
-// If the first column changes, you MUST account for the ID elsewhere
-func (ui *UIModel) selected() tea.Msg {
-	column, _ := ui.table.GetCursorLocation()
-	switch column {
-	case 1:
-		ui.table.CursorLeft()
-	case 2:
-		ui.table.CursorLeft()
-		ui.table.CursorLeft()
-	case 3:
-		ui.table.CursorLeft()
-		ui.table.CursorLeft()
-		ui.table.CursorLeft()
-	}
-
-	return constants.SelectionMessage{}
-}
-
 func (ui *UIModel) Init() tea.Cmd { return nil }
 
 func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -102,10 +83,14 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		ui.table.SetHeight(msg.Height - ui.flex.GetHeight())
 
 	case constants.SelectionMessage:
-		//TODO: do stuff with SelectionMessage
-		ui.view = teamNav
-		ui.table = ui.NewTeamTable()
-		fmt.Printf("ID: %s", ui.table.GetCursorValue())
+		if ui.view == homeNav {
+			return ui, ui.GetRosterCmd
+		} else if ui.view == teamNav {
+			fmt.Printf("ID: %s", ui.table.GetCursorValue())
+		}
+
+	case constants.RosterMessage:
+		fmt.Printf("URL is %s: ", msg.URL)
 
 	// Add All Keybindings here
 	case tea.KeyMsg:
@@ -127,7 +112,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			ui.table.CursorRight()
 
 		case key.Matches(msg, Keybindings.Select):
-			return ui, ui.selected
+			return ui, ui.selectedCmd
 
 		case key.Matches(msg, Keybindings.Esc):
 			if _, s := ui.table.GetFilter(); s != "" {

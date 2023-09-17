@@ -45,7 +45,7 @@ func (ui *UIModel) NewLeagueTable() {
 
 // NewTeamTable fills the UI table with data
 // dependent on SelectionMessage
-func (ui *UIModel) NewTeamTable() *table.TableSingleType[string] {
+func NewTeamTable() *table.TableSingleType[string] {
 	var Roster = table.NewTableSingleType[string](0, 0, TeamHeaders)
 	Roster.SetRatio(ratio).SetMinWidth(minSize)
 	var RosterRows = [][]string{[]string{"player1ID", "Player1Name", "Player1Position", "Player1Number"},
