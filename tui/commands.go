@@ -8,6 +8,7 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/chrisdaly3/chiclets/data"
 	"github.com/chrisdaly3/chiclets/tui/constants"
 	"github.com/tidwall/gjson"
 )
@@ -73,8 +74,13 @@ func (ui *UIModel) GetRosterCmd() tea.Msg {
 		PlayerRows = append(PlayerRows, playerColumn)
 	}
 
-	PlayerTable := NewTeamTable(PlayerRows)
+	playerTable := NewTeamTable(PlayerRows)
 
 	// Returns a message to the UI to update the table view
-	return constants.RosterMessage{Table: PlayerTable}
+	return constants.RosterMessage{Table: playerTable}
+}
+
+func GetLeagueCmd() tea.Msg {
+	leagueTable := NewLeagueTable(data.TeamsTable)
+	return constants.LeagueMessage{Table: leagueTable}
 }

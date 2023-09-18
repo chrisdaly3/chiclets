@@ -96,6 +96,12 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			ui.table = msg.Table
 		}
 
+	case constants.LeagueMessage:
+		if ui.view == teamNav {
+			ui.view = homeNav
+			ui.table = msg.Table
+		}
+
 	// Add All Keybindings here
 	case tea.KeyMsg:
 		// might need to add conditional logic for view / state consideration here
@@ -117,6 +123,9 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, Keybindings.Select):
 			return ui, ui.selectedCmd
+
+		case key.Matches(msg, Keybindings.Previous):
+			return ui, GetLeagueCmd
 
 		case key.Matches(msg, Keybindings.Esc):
 			if _, s := ui.table.GetFilter(); s != "" {

@@ -8,6 +8,6 @@
 - [x] ~~Design and configure stats by team view~~
 - [x] ~~Populate stats view with subsequent api calls depending on selected team.~~
 - [x] ~~Override Table Style Defaults~~
-- [ ] Set up back button from nested tables
+- [x] Set up back button from nested tables
 - [ ] Display team information on side flex boxes
 - [ ] Config for favorite teams?

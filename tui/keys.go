@@ -13,6 +13,7 @@ type keys struct {
 	Left      key.Binding
 	Right     key.Binding
 	Search    key.Binding
+	Previous  key.Binding
 	Backspace key.Binding
 	Esc       key.Binding
 	Quit      key.Binding
@@ -43,6 +44,10 @@ var Keybindings = keys{
 		key.WithKeys("CAPSLOCK"),
 		key.WithHelp("CAPS", "search"),
 	),
+	Previous: key.NewBinding(
+		key.WithKeys("ctrl+b"),
+		key.WithHelp("ctrl+b", "Prior Screen"),
+	),
 	Backspace: key.NewBinding(
 		key.WithKeys("backspace"),
 	),
@@ -60,7 +65,8 @@ var Keybindings = keys{
 // String formatting as follows
 // Up, Down, Left, Right,
 // Select,
+// Previous
 // Search,
 // Esc,
 // Quit
-var HelpText = "Movement: %s, %s, %s, %s\nSelect: %s\nFilter in Column: %s\nRemove Filter: %s\nQuit: %s"
+var HelpText = "Movement: %s, %s, %s, %s\nSelect: %s\nPrior Screen: %s\nFilter in Column: %s\nRemove Filter: %s\nQuit: %s"

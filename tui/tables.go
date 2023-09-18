@@ -33,6 +33,7 @@ func NewFlex() *flexbox.FlexBox {
 				Keybindings.Left.Help().Key,
 				Keybindings.Right.Help().Key,
 				Keybindings.Select.Help().Key,
+				Keybindings.Previous.Help().Key,
 				Keybindings.Search.Help().Key,
 				Keybindings.Esc.Help().Key,
 				Keybindings.Quit.Help().Key)),

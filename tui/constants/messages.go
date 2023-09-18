@@ -9,7 +9,9 @@ type SelectionMessage struct {
 }
 
 type RosterMessage struct {
-	Table   *table.TableSingleType[string]
-	Players [][]string
-	Test    []string
+	Table *table.TableSingleType[string]
+}
+
+type LeagueMessage struct {
+	Table *table.TableSingleType[string]
 }
