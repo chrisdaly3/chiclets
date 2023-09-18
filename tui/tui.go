@@ -8,6 +8,7 @@ import (
 	"github.com/76creates/stickers/table"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/chrisdaly3/chiclets/data"
 	"github.com/chrisdaly3/chiclets/tui/constants"
 	"github.com/chrisdaly3/chiclets/tui/styles"
 )
@@ -42,8 +43,8 @@ var TeamHeaders = []string{"ID", "Player", "Position", "Number"}
 
 var InitModel = UIModel{
 	view:  homeNav,
-	flex:  flexbox.New(0, 0).StylePassing(true),
-	table: table.NewTableSingleType[string](0, 0, HomeHeaders),
+	flex:  NewFlex(),
+	table: NewLeagueTable(data.TeamsTable),
 }
 
 var ratio = []int{25, 50, 50, 65}

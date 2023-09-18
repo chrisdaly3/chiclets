@@ -5,27 +5,26 @@ import (
 
 	"github.com/76creates/stickers/flexbox"
 	"github.com/76creates/stickers/table"
-	"github.com/chrisdaly3/chiclets/data"
 	"github.com/chrisdaly3/chiclets/tui/styles"
 )
 
-// NewLeagueTable fills the UIModel table with teams data
-func (ui *UIModel) NewLeagueTable() {
-	ui.table.SetRatio(ratio).SetMinWidth(minSize)
-	ui.table.AddRows(data.TeamsTable)
-	r1 := ui.flex.NewRow().AddCells(
+// NewFlex creates a flexbox and adds Styles
+func NewFlex() *flexbox.FlexBox {
+	flex := flexbox.New(0, 0).StylePassing(true)
+
+	r1 := flex.NewRow().AddCells(
 		flexbox.NewCell(3, 2),
 		flexbox.NewCell(6, 3).SetStyle(styles.FlexStyleBackground),
 		flexbox.NewCell(3, 2),
 	)
 
-	r2 := ui.flex.NewRow().AddCells(
+	r2 := flex.NewRow().AddCells(
 		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleOrange),
 		flexbox.NewCell(10, 8).SetStyle(styles.FlexStyleBlank),
 		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleOrange),
 	)
 
-	r3 := ui.flex.NewRow().AddCells(
+	r3 := flex.NewRow().AddCells(
 		flexbox.NewCell(3, 2),
 		flexbox.NewCell(6, 3).SetStyle(styles.FlexStyleIce).
 			SetContent(fmt.Sprintf(HelpText,
@@ -39,8 +38,18 @@ func (ui *UIModel) NewLeagueTable() {
 				Keybindings.Quit.Help().Key)),
 		flexbox.NewCell(3, 2),
 	)
+
 	flexRows := []*flexbox.Row{r1, r2, r3}
-	ui.flex.AddRows(flexRows)
+	flex.AddRows(flexRows)
+	return flex
+}
+
+// NewLeagueTable fills the UIModel table with teams data
+func NewLeagueTable(rows [][]string) *table.TableSingleType[string] {
+	var LeagueTable = table.NewTableSingleType[string](0, 0, HomeHeaders)
+	LeagueTable.SetRatio(ratio).SetMinWidth(minSize)
+	LeagueTable.AddRows(rows)
+	return LeagueTable
 }
 
 // NewTeamTable is a helper function called by the GetRosterCmd
