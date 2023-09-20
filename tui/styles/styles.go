@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+/* COLORS */
 var (
 	Black  = lipgloss.Color("#010101")
 	Navy   = lipgloss.Color("#14213D")
@@ -20,7 +21,14 @@ var (
 	/* FLEXBOX STYLES */
 	FlexStyleBackground = lipgloss.NewStyle().
 				Align(lipgloss.Center).
-				Background(Grey)
+				Background(Grey).
+				Border(lipgloss.ThickBorder(), true).
+				BorderBackground(Black, White).
+				BorderForeground(Black)
+
+	FlexStyleBackgroundNoBorder = lipgloss.NewStyle().
+					Align(lipgloss.Center).
+					Background(Grey).Margin(0, 1)
 
 	FlexStyleNavy = lipgloss.NewStyle().
 			Align(lipgloss.Center).
@@ -39,10 +47,9 @@ var (
 			Background(Ice).
 			Foreground(Black).
 			Italic(true).
-			Bold(true)
-
-	FlexStyleTableBackground = lipgloss.NewStyle().
-					Background(Red)
+			Bold(true).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(White).Margin(0, 15)
 
 	FlexStyleBlank = lipgloss.NewStyle()
 )
@@ -58,10 +65,6 @@ var TableStyles = map[table.TableStyleKey]lipgloss.Style{
 	table.TableCellCursorStyleKey:     TableCellCursorStyle,
 	table.TableRowsCursorStyleKey:     TableRowsCursorStyle,
 }
-
-/*
-TableRowsCursorStyleKey
-TableCellCursorStyleKey */
 
 var (
 	TableHeaderStyle = lipgloss.NewStyle().

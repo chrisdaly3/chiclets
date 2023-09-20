@@ -13,19 +13,18 @@ func NewFlex() *flexbox.FlexBox {
 	flex := flexbox.New(0, 0).StylePassing(true)
 
 	r1 := flex.NewRow().AddCells(
-		flexbox.NewCell(3, 2),
+		flexbox.NewCell(3, 3).SetStyle(styles.FlexStyleBackground),
 		flexbox.NewCell(6, 3).SetStyle(styles.FlexStyleBackground),
-		flexbox.NewCell(3, 2),
+		flexbox.NewCell(3, 3).SetStyle(styles.FlexStyleBackground),
 	)
 
 	r2 := flex.NewRow().AddCells(
-		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleOrange),
+		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleBackgroundNoBorder),
 		flexbox.NewCell(10, 8).SetStyle(styles.FlexStyleBlank),
-		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleOrange),
+		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleBackgroundNoBorder),
 	)
 
 	r3 := flex.NewRow().AddCells(
-		flexbox.NewCell(3, 2),
 		flexbox.NewCell(6, 3).SetStyle(styles.FlexStyleIce).
 			SetContent(fmt.Sprintf(HelpText,
 				Keybindings.Up.Help().Key,
@@ -37,7 +36,6 @@ func NewFlex() *flexbox.FlexBox {
 				Keybindings.Search.Help().Key,
 				Keybindings.Esc.Help().Key,
 				Keybindings.Quit.Help().Key)),
-		flexbox.NewCell(3, 2),
 	)
 
 	flexRows := []*flexbox.Row{r1, r2, r3}
