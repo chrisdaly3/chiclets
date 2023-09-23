@@ -84,3 +84,7 @@ func GetLeagueCmd() tea.Msg {
 	leagueTable := NewLeagueTable(data.TeamsTable)
 	return constants.LeagueMessage{Table: leagueTable}
 }
+
+func (ui *UIModel) GetPlayerCmd() tea.Msg {
+	return constants.PlayerMessage{}
+}

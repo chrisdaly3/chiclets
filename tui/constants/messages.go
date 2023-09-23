@@ -15,3 +15,7 @@ type RosterMessage struct {
 type LeagueMessage struct {
 	Table *table.TableSingleType[string]
 }
+
+type PlayerMessage struct {
+	Player PlayerStats
+}

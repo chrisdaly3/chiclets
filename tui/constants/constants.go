@@ -6,3 +6,7 @@ const (
 	SCHEDULEURL = "https://statsapi.web.nhl.com/api/v1/schedule"
 	ROSTERURL   = "https://statsapi.web.nhl.com/api/v1/teams/%s?expand=team.roster"
 )
+
+type PlayerStats struct {
+	Stats map[string]interface{}
+}

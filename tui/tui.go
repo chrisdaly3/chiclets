@@ -28,16 +28,6 @@ type UIModel struct {
 	table *table.TableSingleType[string]
 }
 
-// Table Headers dependent on view
-func (ui *UIModel) getHeaders() []string {
-	if ui.view == homeNav {
-		return HomeHeaders
-	} else if ui.view == teamNav {
-		return TeamHeaders
-	}
-	return []string{"HEADERS", "NOT", "SET", "ERROR"}
-}
-
 var HomeHeaders = []string{"ID", "Locale", "Team Name", "Division"}
 var TeamHeaders = []string{"ID", "Player", "Position", "Number"}
 
@@ -88,6 +78,9 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return ui, ui.GetRosterCmd
 		} else if ui.view == teamNav {
 			fmt.Printf("ID: %s", ui.table.GetCursorValue())
+			//TODO: use the GetPlayerCmd to obtain player current season stats
+			// and update right-side flexbox row with details
+			//return ui, ui.GetPlayerCmd
 		}
 
 	case constants.RosterMessage:
