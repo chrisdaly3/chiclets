@@ -28,7 +28,9 @@ var (
 
 	FlexStyleBackgroundNoBorder = lipgloss.NewStyle().
 					Align(lipgloss.Center).
-					Background(Grey).Margin(0, 1)
+					Background(Grey).
+					Margin(0, 1).
+					Foreground(Navy)
 
 	FlexStyleNavy = lipgloss.NewStyle().
 			Align(lipgloss.Center).

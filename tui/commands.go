@@ -86,5 +86,31 @@ func GetLeagueCmd() tea.Msg {
 }
 
 func (ui *UIModel) GetPlayerCmd() tea.Msg {
-	return constants.PlayerMessage{}
+	id := ui.table.GetCursorValue()
+	stats := getPlayerStats(id)
+	return constants.PlayerMessage{Player: stats}
+}
+
+// getPlayerStats is a helper function to obtain stats for the selected player
+func getPlayerStats(id string) map[string]gjson.Result {
+	requestPath := fmt.Sprintf(constants.PLAYERURL, id)
+
+	response, err := http.Get(requestPath)
+	if err != nil {
+		fmt.Printf("Error communicating with the NHL API: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode > 299 {
+		slog.Error("Unhealthy Response", "response:", response.Body, "statusCode:", response.StatusCode)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		slog.Error("Read Error", "err:", err)
+		os.Exit(1)
+	}
+
+	//PLAYER STAT COLLECTION from NHL API
+	playerResponse := gjson.GetBytes(responseBody, "stats.0.splits.0.stat.@pretty")
+	return playerResponse.Map()
 }

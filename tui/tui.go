@@ -23,18 +23,20 @@ const (
 )
 
 type UIModel struct {
-	view  view
-	flex  *flexbox.FlexBox
-	table *table.TableSingleType[string]
+	view           view
+	flex           *flexbox.FlexBox
+	table          *table.TableSingleType[string]
+	statsDisplayed bool
 }
 
 var HomeHeaders = []string{"ID", "Locale", "Team Name", "Division"}
 var TeamHeaders = []string{"ID", "Player", "Position", "Number"}
 
 var InitModel = UIModel{
-	view:  homeNav,
-	flex:  NewFlex(),
-	table: NewLeagueTable(data.TeamsTable),
+	view:           homeNav,
+	flex:           NewFlex(),
+	table:          NewLeagueTable(data.TeamsTable),
+	statsDisplayed: false,
 }
 
 var ratio = []int{25, 50, 50, 65}
@@ -78,9 +80,9 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return ui, ui.GetRosterCmd
 		} else if ui.view == teamNav {
 			fmt.Printf("ID: %s", ui.table.GetCursorValue())
+			return ui, ui.GetPlayerCmd
 			//TODO: use the GetPlayerCmd to obtain player current season stats
 			// and update right-side flexbox row with details
-			//return ui, ui.GetPlayerCmd
 		}
 
 	case constants.RosterMessage:
@@ -93,6 +95,16 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if ui.view == teamNav {
 			ui.view = homeNav
 			ui.table = msg.Table
+		}
+
+	case constants.PlayerMessage:
+		statCell := ui.flex.GetRow(1).GetCell(2)
+		if ui.statsDisplayed == false {
+			ui.statsDisplayed = true
+			statCell.SetContent(fmt.Sprintf("Goals Scored: %v", msg.Player["assists"].Int()))
+		} else if ui.statsDisplayed == true {
+			ui.statsDisplayed = false
+			statCell.SetContent("")
 		}
 
 	// Add All Keybindings here

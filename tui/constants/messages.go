@@ -2,6 +2,7 @@ package constants
 
 import (
 	"github.com/76creates/stickers/table"
+	"github.com/tidwall/gjson"
 )
 
 type SelectionMessage struct {
@@ -17,5 +18,5 @@ type LeagueMessage struct {
 }
 
 type PlayerMessage struct {
-	Player PlayerStats
+	Player map[string]gjson.Result
 }
