@@ -96,14 +96,52 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case constants.PlayerMessage:
 		statCell := ui.flex.GetRow(1).GetCell(2)
+
+		//Player Stat block content
+		var PlayerStatsMessage = fmt.Sprintf("Games Played: %v\n\nGoals: %v\n\nAssists: %v\n\n+/-: %v\n\nPenalty Minutes: %v\n\nPower Play Goals: %v\n\nPower Play Pts: %v\n\nShort-hand Goals: %v\n\nShort-hand Points: %v\n\nOvertime Goals: %v\n\nGame-winning Goals: %v\n\nShots: %v\n\nShot Pct: %.3f",
+			msg.Player["games"].Int(),
+			msg.Player["goals"].Int(),
+			msg.Player["assists"].Int(),
+			msg.Player["plusMinus"].Int(),
+			msg.Player["pim"].Int(),
+			msg.Player["powerPlayGoals"].Int(),
+			msg.Player["powerPlayPoints"].Int(),
+			msg.Player["shortHandedGoals"].Int(),
+			msg.Player["shortHandedPoints"].Int(),
+			msg.Player["overTimeGoals"].Int(),
+			msg.Player["gameWinningGoals"].Int(),
+			msg.Player["shots"].Int(),
+			msg.Player["shotPct"].Float())
+
+		//Goalie Stat block content
+		var GoalieStatsMessage = fmt.Sprintf("Games Played: %v\n\nShots Against: %v\n\nSaves: %v\n\nGA: %v\n\nSave Pct: %.3f\n\nGoals Allowed/Gm: %.3f\n\nShutouts: %v",
+			msg.Player["games"].Int(),
+			msg.Player["shotsAgainst"].Int(),
+			msg.Player["saves"].Int(),
+			msg.Player["goalsAgainst"].Int(),
+			msg.Player["savePercentage"].Float(),
+			msg.Player["goalAgainstAverage"].Float(),
+			msg.Player["shutouts"].Int(),
+		)
+
 		if ui.statsDisplayed == false {
 			ui.statsDisplayed = true
-			statCell.SetContent(fmt.Sprintf("Goals Scored: %v", msg.Player["goals"].Int()))
+			if _, ok := msg.Player["saves"]; ok {
+				statCell.SetContent(GoalieStatsMessage)
+			} else {
+				statCell.SetContent(PlayerStatsMessage)
+			}
+
 			// TODO: Set up all player stats and details for current season.
 			// Display career stats on left frame? perhaps
 		} else if ui.statsDisplayed == true {
 			ui.statsDisplayed = false
 			statCell.SetContent("")
+			if _, ok := msg.Player["saves"]; ok {
+				statCell.SetContent(GoalieStatsMessage)
+			} else {
+				statCell.SetContent(PlayerStatsMessage)
+			}
 		}
 
 	// Add All Keybindings here
