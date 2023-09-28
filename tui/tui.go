@@ -81,8 +81,6 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else if ui.view == teamNav {
 			fmt.Printf("ID: %s", ui.table.GetCursorValue())
 			return ui, ui.GetPlayerCmd
-			//TODO: use the GetPlayerCmd to obtain player current season stats
-			// and update right-side flexbox row with details
 		}
 
 	case constants.RosterMessage:
@@ -102,6 +100,8 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if ui.statsDisplayed == false {
 			ui.statsDisplayed = true
 			statCell.SetContent(fmt.Sprintf("Goals Scored: %v", msg.Player["assists"].Int()))
+			// TODO: Set up all player stats and details for current season.
+			// Display career stats on left frame? perhaps
 		} else if ui.statsDisplayed == true {
 			ui.statsDisplayed = false
 			statCell.SetContent("")
