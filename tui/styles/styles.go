@@ -24,7 +24,9 @@ var (
 				Background(Grey).
 				Border(lipgloss.ThickBorder(), true).
 				BorderBackground(Black, White).
-				BorderForeground(Black)
+				BorderForeground(Black).
+				Margin(0, 1).
+				Foreground(Navy)
 
 	FlexStyleBackgroundNoBorder = lipgloss.NewStyle().
 					Align(lipgloss.Center).

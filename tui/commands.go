@@ -32,6 +32,9 @@ func (ui *UIModel) selectedCmd() tea.Msg {
 	return constants.SelectionMessage{}
 }
 
+// TODO: Here is where to implement the goroutines referenced in tui.go:85
+// nest the "big call" inside a goroutine, and do the same for each other API call.
+// maybe shift the messiness into package data to keep this cleaner
 func (ui *UIModel) GetRosterCmd() tea.Msg {
 	// API CALL HAPPENS HERE
 	id := ui.table.GetCursorValue()

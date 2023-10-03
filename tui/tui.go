@@ -39,7 +39,7 @@ var InitModel = UIModel{
 	statsDisplayed: false,
 }
 
-var ratio = []int{25, 50, 50, 65}
+var ratio = []int{35, 65, 50, 50}
 var minSize = []int{5, 5, 5, 5}
 
 // searchTable accepts a tea.KeyMsg.Str() vand sets a columnar search query in model table.
@@ -82,23 +82,45 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return ui, ui.GetPlayerCmd
 		}
 
+		//TODO: Convert RosterMessage data structure to a struct response,
+		//rely on goroutines for async calls to Teams endpoints to populate row information
 	case constants.RosterMessage:
 		if ui.view == homeNav {
 			ui.view = teamNav
 			ui.table = msg.Table
 		}
 
+		//update top flexbox rows with Team Information for the season
+		var teamStatsMessage = fmt.Sprintf("team season stats")
+		var lastGameMessage = fmt.Sprintf("last game details")
+		var nextGameMessage = fmt.Sprintf("next game details")
+
+		seasonCell := ui.flex.GetRow(0).GetCell(1)
+		seasonCell.SetContent(teamStatsMessage)
+		priorGameCell := ui.flex.GetRow(0).GetCell(0)
+		priorGameCell.SetContent(lastGameMessage)
+		nextGameCell := ui.flex.GetRow(0).GetCell(2)
+		nextGameCell.SetContent(nextGameMessage)
+
 	case constants.LeagueMessage:
 		if ui.view == teamNav {
 			ui.view = homeNav
 			ui.table = msg.Table
 		}
+		// Unset the stat blocks displayed for the team and players
+		// team row
+		ui.flex.GetRow(0).GetCell(0).SetContent("")
+		ui.flex.GetRow(0).GetCell(1).SetContent("")
+		ui.flex.GetRow(0).GetCell(2).SetContent("")
+		//player row
+		ui.flex.GetRow(1).GetCell(0).SetContent("")
+		ui.flex.GetRow(1).GetCell(2).SetContent("")
 
 	case constants.PlayerMessage:
 		statCell := ui.flex.GetRow(1).GetCell(2)
 
 		//Player Stat block content
-		var PlayerStatsMessage = fmt.Sprintf("Games Played: %v\n\nGoals: %v\n\nAssists: %v\n\n+/-: %v\n\nPenalty Minutes: %v\n\nPower Play Goals: %v\n\nPower Play Pts: %v\n\nShort-hand Goals: %v\n\nShort-hand Points: %v\n\nOvertime Goals: %v\n\nGame-winning Goals: %v\n\nShots: %v\n\nShot Pct: %.3f",
+		var playerStatsMessage = fmt.Sprintf("\nCURRENT SEASON\n\n\n\nGames Played: %v\n\nGoals: %v\n\nAssists: %v\n\n+/-: %v\n\nPenalty Minutes: %v\n\nPower Play Goals: %v\n\nPower Play Pts: %v\n\nShort-hand Goals: %v\n\nShort-hand Points: %v\n\nOvertime Goals: %v\n\nGame-winning Goals: %v\n\nShots: %v\n\nShot Pct: %.3f",
 			msg.Player["games"].Int(),
 			msg.Player["goals"].Int(),
 			msg.Player["assists"].Int(),
@@ -114,7 +136,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			msg.Player["shotPct"].Float())
 
 		//Goalie Stat block content
-		var GoalieStatsMessage = fmt.Sprintf("Games Played: %v\n\nShots Against: %v\n\nSaves: %v\n\nGA: %v\n\nSave Pct: %.3f\n\nGoals Allowed/Gm: %.3f\n\nShutouts: %v",
+		var goalieStatsMessage = fmt.Sprintf("\nCURRENT SEASON\n\n\n\nGames Played: %v\n\nShots Against: %v\n\nSaves: %v\n\nGA: %v\n\nSave Pct: %.3f\n\nGoals Allowed/Gm: %.3f\n\nShutouts: %v",
 			msg.Player["games"].Int(),
 			msg.Player["shotsAgainst"].Int(),
 			msg.Player["saves"].Int(),
@@ -127,9 +149,9 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if ui.statsDisplayed == false {
 			ui.statsDisplayed = true
 			if _, ok := msg.Player["saves"]; ok {
-				statCell.SetContent(GoalieStatsMessage)
+				statCell.SetContent(goalieStatsMessage)
 			} else {
-				statCell.SetContent(PlayerStatsMessage)
+				statCell.SetContent(playerStatsMessage)
 			}
 
 			// TODO: Set up all player stats and details for current season.
@@ -138,9 +160,9 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			ui.statsDisplayed = false
 			statCell.SetContent("")
 			if _, ok := msg.Player["saves"]; ok {
-				statCell.SetContent(GoalieStatsMessage)
+				statCell.SetContent(goalieStatsMessage)
 			} else {
-				statCell.SetContent(PlayerStatsMessage)
+				statCell.SetContent(playerStatsMessage)
 			}
 		}
 
