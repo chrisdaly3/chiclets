@@ -78,7 +78,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case constants.SelectionMessage:
 		if ui.view == homeNav {
-			return ui, ui.GetRosterCmd //tea.Batch(ui.GetRosterCmd, ui.GetPreviousCmd) //ui.GetNextCmd, ui.GetRecordCmd)
+			return ui, ui.GetTeamInfoCmd
 		} else if ui.view == teamNav {
 			return ui, ui.GetPlayerCmd
 		}

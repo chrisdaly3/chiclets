@@ -32,7 +32,7 @@ func (ui *UIModel) selectedCmd() tea.Msg {
 	return constants.SelectionMessage{}
 }
 
-func (ui *UIModel) GetRosterCmd() tea.Msg {
+func (ui *UIModel) GetTeamInfoCmd() tea.Msg {
 	// API CALL HAPPENS HERE
 	id := ui.table.GetCursorValue()
 	requestPath := fmt.Sprintf(constants.ROSTERURL, id)
