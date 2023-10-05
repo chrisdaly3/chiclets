@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	//"runtime"
 	"unicode"
 
 	"github.com/76creates/stickers/flexbox"
@@ -77,14 +78,13 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case constants.SelectionMessage:
 		if ui.view == homeNav {
-			return ui, ui.GetRosterCmd
+			return ui, ui.GetRosterCmd //tea.Batch(ui.GetRosterCmd, ui.GetPreviousCmd) //ui.GetNextCmd, ui.GetRecordCmd)
 		} else if ui.view == teamNav {
 			return ui, ui.GetPlayerCmd
 		}
 
-		//TODO: Convert RosterMessage data structure to a struct response,
-		//rely on goroutines for async calls to Teams endpoints to populate row information
-	case constants.RosterMessage:
+	case constants.TeamInfoMessage:
+		//runtime.Breakpoint()
 		if ui.view == homeNav {
 			ui.view = teamNav
 			ui.table = msg.Table
@@ -92,7 +92,13 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		//update top flexbox rows with Team Information for the season
 		var teamStatsMessage = fmt.Sprintf("team season stats")
-		var lastGameMessage = fmt.Sprintf("last game details")
+		var lastGameMessage = fmt.Sprintf("Previous game details\n\nDate: %v\n\n\nAway Team: %v\n\n\tScore: %v\n\n\nHome Team: %v\n\n\tScore: %v",
+			msg.TeamPriorGame["date"],
+			msg.TeamPriorGame["away"],
+			msg.TeamPriorGame["awayScore"].Int(),
+			msg.TeamPriorGame["home"],
+			msg.TeamPriorGame["homeScore"].Int(),
+		)
 		var nextGameMessage = fmt.Sprintf("next game details")
 
 		seasonCell := ui.flex.GetRow(0).GetCell(1)

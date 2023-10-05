@@ -51,7 +51,7 @@ func NewLeagueTable(rows [][]string) *table.TableSingleType[string] {
 	return LeagueTable
 }
 
-// NewTeamTable is a helper function called by the GetRosterCmd
+// NewTeamTable is a helper function called by the GetTeamInfoCmd
 // to populate a new table with Team Roster data
 func NewTeamTable(rows [][]string) *table.TableSingleType[string] {
 	var RosterTable = table.NewTableSingleType[string](0, 0, TeamHeaders)

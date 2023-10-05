@@ -9,7 +9,7 @@ type SelectionMessage struct {
 	Value string
 }
 
-type RosterMessage struct {
+type TeamInfoMessage struct {
 	Table         *table.TableSingleType[string]
 	TeamStats     map[string]gjson.Result
 	TeamPriorGame map[string]gjson.Result

@@ -32,9 +32,6 @@ func (ui *UIModel) selectedCmd() tea.Msg {
 	return constants.SelectionMessage{}
 }
 
-// TODO: Here is where to implement the goroutines referenced in tui.go:85
-// nest the "big call" inside a goroutine, and do the same for each other API call.
-// maybe shift the messiness into package data to keep this cleaner
 func (ui *UIModel) GetRosterCmd() tea.Msg {
 	// API CALL HAPPENS HERE
 	id := ui.table.GetCursorValue()
@@ -78,10 +75,87 @@ func (ui *UIModel) GetRosterCmd() tea.Msg {
 	}
 
 	playerTable := NewTeamTable(PlayerRows)
+	prevGame := ui.GetPreviousCmd()
 
 	// Returns a message to the UI to update the table view
-	return constants.RosterMessage{Table: playerTable}
+	return constants.TeamInfoMessage{Table: playerTable, TeamPriorGame: prevGame}
 }
+
+func (ui *UIModel) GetPreviousCmd() map[string]gjson.Result {
+	id := ui.table.GetCursorValue()
+	requestPath := fmt.Sprintf(constants.LASTGAME, id)
+
+	response, err := http.Get(requestPath)
+	if err != nil {
+		fmt.Printf("Error communicating with NHL API: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode > 299 {
+		slog.Error("Unhealthy Response", "response:", response.Body, "statusCode:", response.StatusCode)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		slog.Error("Read Error", "err:", err)
+		os.Exit(1)
+	}
+
+	previousGame := gjson.GetBytes(responseBody, "{teams.0.previousGameSchedule.dates.0.date,teams.0.previousGameSchedule.dates.0.games.0.teams,teams.0.previousGameSchedule.dates.0.games.0.venue.name}.@join")
+	awayTeam := gjson.Result.Get(previousGame, "{teams.away.team.name,teams.away.score}").Map()
+	homeTeam := gjson.Result.Get(previousGame, "{teams.home.team.name,teams.home.score}").Map()
+
+	prevGameMap := make(map[string]gjson.Result)
+	prevGameMap["date"] = previousGame.Map()["date"]
+	prevGameMap["away"] = awayTeam["name"]
+	prevGameMap["awayScore"] = awayTeam["score"]
+	prevGameMap["home"] = homeTeam["name"]
+	prevGameMap["homeScore"] = homeTeam["score"]
+
+	return prevGameMap
+}
+
+//TODO: Setup next game and team record calls + parsers
+/*func (ui *UIModel) GetNextCmd() tea.Msg {
+	id := ui.table.GetCursorValue()
+	requestPath := fmt.Sprintf(constants.NEXTGAME, id)
+
+	response, err := http.Get(requestPath)
+	if err != nil {
+		fmt.Printf("Error communicating with NHL API: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode > 299 {
+		slog.Error("Unhealthy Response", "response:", response.Body, "statusCode:", response.StatusCode)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		slog.Error("Read Error", "err:", err)
+		os.Exit(1)
+	}
+
+}
+
+func (ui *UIModel) GetRecordCmd() tea.Msg {
+	id := ui.table.GetCursorValue()
+	requestPath := fmt.Sprintf(constants.RECORDURL, id)
+
+	response, err := http.Get(requestPath)
+	if err != nil {
+		fmt.Printf("Error communicating with NHL API: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode > 299 {
+		slog.Error("Unhealthy Response", "response:", response.Body, "statusCode:", response.StatusCode)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		slog.Error("Read Error", "err:", err)
+		os.Exit(1)
+	}
+
+}*/
 
 func GetLeagueCmd() tea.Msg {
 	leagueTable := NewLeagueTable(data.TeamsTable)
