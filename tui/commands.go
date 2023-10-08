@@ -77,9 +77,10 @@ func (ui *UIModel) GetTeamInfoCmd() tea.Msg {
 	playerTable := NewTeamTable(PlayerRows)
 	prevGame := ui.GetPreviousCmd()
 	nextGame := ui.GetNextCmd()
+	teamStandings := ui.GetRecordCmd()
 
 	// Returns a message to the UI to update the table view
-	return constants.TeamInfoMessage{Table: playerTable, TeamPriorGame: prevGame, TeamNextGame: nextGame}
+	return constants.TeamInfoMessage{Table: playerTable, TeamPriorGame: prevGame, TeamNextGame: nextGame, TeamStats: teamStandings}
 }
 
 func (ui *UIModel) GetPreviousCmd() map[string]gjson.Result {
@@ -154,9 +155,9 @@ func (ui *UIModel) GetNextCmd() map[string]gjson.Result {
 
 }
 
-/* func (ui *UIModel) GetRecordCmd() tea.Msg {
+func (ui *UIModel) GetRecordCmd() map[string]gjson.Result {
 	id := ui.table.GetCursorValue()
-	requestPath := fmt.Sprintf(constants.RECORDURL, id)
+	requestPath := constants.STANDINGSURL
 
 	response, err := http.Get(requestPath)
 	if err != nil {
@@ -173,7 +174,30 @@ func (ui *UIModel) GetNextCmd() map[string]gjson.Result {
 		os.Exit(1)
 	}
 
-}*/
+	records := gjson.GetBytes(responseBody, fmt.Sprintf("records.#.teamRecords.#(team.id == %v )", id))
+	name := gjson.Result.Get(records, "0.team.name")
+	points := gjson.Result.Get(records, "0.points")
+	gamesPlayed := gjson.Result.Get(records, "0.gamesPlayed")
+	divRank := gjson.Result.Get(records, "0.divisionRank")
+	streak := gjson.Result.Get(records, "0.streak.streakCode")
+	regWins := gjson.Result.Get(records, "0.regulationWins")
+	row := gjson.Result.Get(records, "0.row")
+	goalsFor := gjson.Result.Get(records, "0.goalsScored")
+	goalsAgainst := gjson.Result.Get(records, "0.goalsAgainst")
+
+	recordsMap := make(map[string]gjson.Result)
+	recordsMap["teamName"] = name
+	recordsMap["points"] = points
+	recordsMap["gamesPlayed"] = gamesPlayed
+	recordsMap["divRank"] = divRank
+	recordsMap["streak"] = streak
+	recordsMap["regWins"] = regWins
+	recordsMap["row"] = row
+	recordsMap["goalsFor"] = goalsFor
+	recordsMap["goalsAgainst"] = goalsAgainst
+
+	return recordsMap
+}
 
 func GetLeagueCmd() tea.Msg {
 	leagueTable := NewLeagueTable(data.TeamsTable)

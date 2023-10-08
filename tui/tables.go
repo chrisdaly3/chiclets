@@ -11,7 +11,7 @@ import (
 
 // NewFlex creates a flexbox and adds Styles
 func NewFlex() *flexbox.FlexBox {
-	flex := flexbox.New(0, 0).StylePassing(true)
+	flex := flexbox.New(0, 0).StylePassing(false)
 
 	r1 := flex.NewRow().AddCells(
 		flexbox.NewCell(3, 4).SetStyle(styles.FlexStyleBackground),
@@ -21,9 +21,10 @@ func NewFlex() *flexbox.FlexBox {
 	)
 
 	r2 := flex.NewRow().AddCells(
+		flexbox.NewCell(1, 8).SetStyle(styles.FlexStyleTable),
+		flexbox.NewCell(6, 8).SetStyle(styles.FlexStyleTable),
 		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleBackgroundNoBorder),
-		flexbox.NewCell(10, 8).SetStyle(styles.FlexStyleBlank),
-		flexbox.NewCell(5, 8).SetStyle(styles.FlexStyleBackgroundNoBorder),
+		flexbox.NewCell(1, 8).SetStyle(styles.FlexStyleTable),
 	)
 
 	r3 := flex.NewRow().AddCells(

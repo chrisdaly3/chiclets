@@ -55,12 +55,7 @@ var (
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(White).Margin(0, 15)
 
-	FlexStyleBlank = lipgloss.NewStyle()
-
-	TextStyleBold = lipgloss.NewStyle().
-			Align(lipgloss.Center).
-			Bold(true).
-			Background(Grey)
+	FlexStyleTable = lipgloss.NewStyle()
 )
 
 /* TABLE STYLES */
