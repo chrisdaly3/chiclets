@@ -8,7 +8,10 @@
 - View all your favorite teams and players in the terminal with ease.
 
 ## In Use:
-
+```
+go install github.com/chrisdaly3/chiclets
+chiclets
+```
 
 ## TODO:
 - [x] ~~Implement flexbox functionality~~
