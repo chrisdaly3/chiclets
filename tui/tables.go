@@ -5,6 +5,7 @@ import (
 
 	"github.com/76creates/stickers/flexbox"
 	"github.com/76creates/stickers/table"
+	"github.com/chrisdaly3/chiclets/tui/constants"
 	"github.com/chrisdaly3/chiclets/tui/styles"
 )
 
@@ -13,9 +14,10 @@ func NewFlex() *flexbox.FlexBox {
 	flex := flexbox.New(0, 0).StylePassing(true)
 
 	r1 := flex.NewRow().AddCells(
-		flexbox.NewCell(3, 3).SetStyle(styles.FlexStyleBackground),
-		flexbox.NewCell(6, 3).SetStyle(styles.FlexStyleBackground),
-		flexbox.NewCell(3, 3).SetStyle(styles.FlexStyleBackground),
+		flexbox.NewCell(3, 4).SetStyle(styles.FlexStyleBackground),
+		flexbox.NewCell(6, 4).SetStyle(styles.FlexStyleBackground).
+			SetContent(constants.HOMEHEADER),
+		flexbox.NewCell(3, 4).SetStyle(styles.FlexStyleBackground),
 	)
 
 	r2 := flex.NewRow().AddCells(

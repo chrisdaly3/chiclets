@@ -76,9 +76,10 @@ func (ui *UIModel) GetTeamInfoCmd() tea.Msg {
 
 	playerTable := NewTeamTable(PlayerRows)
 	prevGame := ui.GetPreviousCmd()
+	nextGame := ui.GetNextCmd()
 
 	// Returns a message to the UI to update the table view
-	return constants.TeamInfoMessage{Table: playerTable, TeamPriorGame: prevGame}
+	return constants.TeamInfoMessage{Table: playerTable, TeamPriorGame: prevGame, TeamNextGame: nextGame}
 }
 
 func (ui *UIModel) GetPreviousCmd() map[string]gjson.Result {
@@ -114,8 +115,8 @@ func (ui *UIModel) GetPreviousCmd() map[string]gjson.Result {
 	return prevGameMap
 }
 
-//TODO: Setup next game and team record calls + parsers
-/*func (ui *UIModel) GetNextCmd() tea.Msg {
+// TODO: Setup next game and team record calls + parsers
+func (ui *UIModel) GetNextCmd() map[string]gjson.Result {
 	id := ui.table.GetCursorValue()
 	requestPath := fmt.Sprintf(constants.NEXTGAME, id)
 
@@ -134,9 +135,26 @@ func (ui *UIModel) GetPreviousCmd() map[string]gjson.Result {
 		os.Exit(1)
 	}
 
+	upcomingGame := gjson.GetBytes(responseBody, "{teams.0.nextGameSchedule.dates.0.date,teams.0.nextGameSchedule.dates.0.games.0.teams,teams.0.nextGameSchedule.dates.0.games.0.venue.name}.@join")
+	awayTeam := gjson.Result.Get(upcomingGame, "{teams.away.team.name,teams.away.leagueRecord.wins,teams.away.leagueRecord.losses,teams.away.leagueRecord.ot}").Map()
+	homeTeam := gjson.Result.Get(upcomingGame, "{teams.home.team.name,teams.home.leagueRecord.wins,teams.home.leagueRecord.losses,teams.home.leagueRecord.ot}").Map()
+
+	nextGameMap := make(map[string]gjson.Result)
+	nextGameMap["date"] = upcomingGame.Map()["date"]
+	nextGameMap["away"] = awayTeam["name"]
+	nextGameMap["awayWins"] = awayTeam["wins"]
+	nextGameMap["awayLosses"] = awayTeam["losses"]
+	nextGameMap["awayOTL"] = awayTeam["ot"]
+	nextGameMap["home"] = homeTeam["name"]
+	nextGameMap["homeWins"] = homeTeam["wins"]
+	nextGameMap["homeLosses"] = homeTeam["losses"]
+	nextGameMap["homeOTL"] = homeTeam["ot"]
+
+	return nextGameMap
+
 }
 
-func (ui *UIModel) GetRecordCmd() tea.Msg {
+/* func (ui *UIModel) GetRecordCmd() tea.Msg {
 	id := ui.table.GetCursorValue()
 	requestPath := fmt.Sprintf(constants.RECORDURL, id)
 
