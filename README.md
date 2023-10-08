@@ -9,7 +9,7 @@
 
 ## In Use:
 ```
-go install github.com/chrisdaly3/chiclets
+go install github.com/chrisdaly3/chiclets@latest
 chiclets
 ```
 
