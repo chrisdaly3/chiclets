@@ -1,7 +1,9 @@
 ## !! As of `Oct. 8, 2023` I have discovered the NHL has created a new API !!
-- I am unsure what this means for this project as it stands.
-- I am hoping the NHL continues to support their prior API, for which this project has been designed around.
-- If not, I will plan to rework this project once I have more information and the 2023/2024 season gets underway.
+~~- I am unsure what this means for this project as it stands.~~
+~~- I am hoping the NHL continues to support their prior API, for which this project has been designed around.~~
+---> EDIT: it appears the NHL will **NOT** support the old api anymore in the new season. 
+- I am tracking these changes closely, many thanks to the folks who are uncovering and documenting the endpoints throughout the community.
+- I hope to get this project in working status by the time the `2023-2024` season begins, as I do not suspect the changes to be that difficult to implement, I just need to know how to call the new API.
 
 # Chiclets
 - A hockey stats TUI (work in progress)
