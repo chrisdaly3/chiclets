@@ -14,10 +14,10 @@ func NewFlex() *flexbox.FlexBox {
 	flex := flexbox.New(0, 0).StylePassing(false)
 
 	r1 := flex.NewRow().AddCells(
-		flexbox.NewCell(3, 4).SetStyle(styles.FlexStyleBackground),
-		flexbox.NewCell(6, 4).SetStyle(styles.FlexStyleBackground).
+		flexbox.NewCell(4, 4).SetStyle(styles.FlexStyleBackground),
+		flexbox.NewCell(8, 4).SetStyle(styles.FlexStyleBackground).
 			SetContent(constants.HOMEHEADER),
-		flexbox.NewCell(3, 4).SetStyle(styles.FlexStyleBackground),
+		flexbox.NewCell(4, 4).SetStyle(styles.FlexStyleBackground),
 	)
 
 	r2 := flex.NewRow().AddCells(
@@ -28,7 +28,7 @@ func NewFlex() *flexbox.FlexBox {
 	)
 
 	r3 := flex.NewRow().AddCells(
-		flexbox.NewCell(6, 3).SetStyle(styles.FlexStyleIce).
+		flexbox.NewCell(2, 3).SetStyle(styles.FlexStyleIce).
 			SetContent(fmt.Sprintf(HelpText,
 				Keybindings.Up.Help().Key,
 				Keybindings.Down.Help().Key,

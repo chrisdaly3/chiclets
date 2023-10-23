@@ -102,14 +102,14 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			msg.TeamStats["goalsFor"],
 			msg.TeamStats["goalsAgainst"],
 		)
-		var lastGameMessage = fmt.Sprintf("\nPREVIOUS GAME\n\nDate: %v\n\nAway Team: %v\n\tScore: %v\n\nHome Team: %v\n\tScore: %v",
+		var lastGameMessage = fmt.Sprintf("\nPREVIOUS GAME\n\nDate: %v\nAway Team: %v\nScore: %v\nHome Team: %v\nScore: %v",
 			msg.TeamPriorGame["date"],
 			msg.TeamPriorGame["away"],
 			msg.TeamPriorGame["awayScore"].Int(),
 			msg.TeamPriorGame["home"],
 			msg.TeamPriorGame["homeScore"].Int(),
 		)
-		var nextGameMessage = fmt.Sprintf("\nNEXT GAME\n\nDate: %v\n\nAway Team: %v\n\tWins: %v\tLosses: %v\tOTL: %v\n\nHome Team: %v\n\tWins: %v\tLosses: %v\tOTL: %v",
+		var nextGameMessage = fmt.Sprintf("\nNEXT GAME\n\nDate: %v\nAway Team: %v\n\tWins: %v\tLosses: %v\tOTL: %v\n\nHome Team: %v\n\tWins: %v\tLosses: %v\tOTL: %v",
 			msg.TeamNextGame["date"],
 			msg.TeamNextGame["away"],
 			msg.TeamNextGame["awayWins"].Int(),
@@ -146,7 +146,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		statCell := ui.flex.GetRow(1).GetCell(2)
 
 		//Player Stat block content
-		var playerStatsMessage = fmt.Sprintf("\nCURRENT SEASON\n\nGames Played: %v\n\nGoals: %v\n\nAssists: %v\n\n+/-: %v\n\nPenalty Minutes: %v\n\nPower Play Goals: %v\n\nPower Play Pts: %v\n\nShort-hand Goals: %v\n\nShort-hand Points: %v\n\nOvertime Goals: %v\n\nGame-winning Goals: %v\n\nShots: %v\n\nShot Pct: %.3f",
+		var playerStatsMessage = fmt.Sprintf("\n\nCURRENT SEASON\n\nGames Played: %v\nGoals: %v\nAssists: %v\n+/-: %v\nPenalty Minutes: %v\nPower Play Goals: %v\nPower Play Pts: %v\nShort-hand Goals: %v\nShort-hand Points: %v\nOvertime Goals: %v\nGame-winning Goals: %v\nShots: %v\nShot Pct: %.3f",
 			msg.Player["games"].Int(),
 			msg.Player["goals"].Int(),
 			msg.Player["assists"].Int(),
@@ -162,7 +162,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			msg.Player["shotPct"].Float())
 
 		//Goalie Stat block content
-		var goalieStatsMessage = fmt.Sprintf("\nCURRENT SEASON\n\nGames Played: %v\n\nShots Against: %v\n\nSaves: %v\n\nGA: %v\n\nSave Pct: %.3f\n\nGoals Allowed/Gm: %.3f\n\nShutouts: %v",
+		var goalieStatsMessage = fmt.Sprintf("\n\nCURRENT SEASON\n\nGames Played: %v\nShots Against: %v\nSaves: %v\nGA: %v\nSave Pct: %.3f\nGoals Allowed/Gm: %.3f\nShutouts: %v",
 			msg.Player["games"].Int(),
 			msg.Player["shotsAgainst"].Int(),
 			msg.Player["saves"].Int(),
@@ -180,8 +180,6 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				statCell.SetContent(playerStatsMessage)
 			}
 
-			// TODO: Set up all player stats and details for current season.
-			// Display career stats on left frame? perhaps
 		} else if ui.statsDisplayed == true {
 			ui.statsDisplayed = false
 			statCell.SetContent("")

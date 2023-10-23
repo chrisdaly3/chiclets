@@ -69,4 +69,9 @@ var Keybindings = keys{
 // Search,
 // Esc,
 // Quit
-var HelpText = "Movement: %s, %s, %s, %s\nSelect: %s\nPrior Screen: %s\nFilter in Column: %s\nRemove Filter: %s\nQuit: %s"
+var HelpText = `
+  Movement: %s, %s, %s, %s
+  Select: %s | Prior Screen: %s
+  Filter in Column: %s | Remove Filter: %s
+  Quit: %s
+  `
