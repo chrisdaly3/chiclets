@@ -30,7 +30,7 @@ type UIModel struct {
 	statsDisplayed bool
 }
 
-var HomeHeaders = []string{"ID", "Locale", "Team Name", "Division"}
+var HomeHeaders = []string{"Team ID", "Team Name", "Team Points", "Division"}
 var TeamHeaders = []string{"ID", "Player", "Position", "Number"}
 
 var InitModel = UIModel{
@@ -84,7 +84,6 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case constants.TeamInfoMessage:
-		//runtime.Breakpoint()
 		if ui.view == homeNav {
 			ui.view = teamNav
 			ui.table = msg.Table

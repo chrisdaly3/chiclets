@@ -1,9 +1,8 @@
 # Chiclets
 - A hockey stats TUI (project is still a work in progress)
 - View all your favorite teams and players in the terminal with ease.
-- *Note: it appears there has been a new NHL API created as of Early Fall 2023*
-    - *However, the prior API schema still appears to be supported for the current season.*
-    - *I am watching these changes closesly as it pertains to this project.*
+- **NOTE: AS OF `11.13.23` THIS PROJECT IS IN THE PROCESS OF BEING FIXED**
+    - the NHL dropped support for the old API so in the meantime I need to fix a few of the calls this app relies on
 
 ## In Use:
 ```
@@ -25,3 +24,4 @@ chiclets
 - [ ] Show popup at player stats to allow season selection
 - [ ] Add improved logging
 - [ ] Clean up project structure (specifically data directory) 
+- [ ] Fix ALL API calls and data parsing. League table is done, need to fix roster tables next

@@ -32,12 +32,12 @@ func getTeams() []gjson.Result {
 	}
 
 	// Check response for number of teams
-	responseTeamCount := gjson.GetBytes(responseBody, "teams.#")
+	responseTeamCount := gjson.GetBytes(responseBody, "standings.#")
 
 	// Use result of team number to iterate all team details
 	for i := 0; int64(i) < responseTeamCount.Int(); i++ {
-		teamIndex := fmt.Sprintf("teams.%v", i)
-		gjFields := fmt.Sprintf("{%s.id,%s.teamName,%s.locationName,%s.division.name}.@join", teamIndex, teamIndex, teamIndex, teamIndex)
+		teamIndex := fmt.Sprintf("standings.%v", i)
+		gjFields := fmt.Sprintf("{%s.teamAbbrev.default,%s.teamName.default,%s.points,%s.divisionName}.@values", teamIndex, teamIndex, teamIndex, teamIndex)
 
 		team := gjson.GetBytes(responseBody, gjFields)
 		teams = append(teams, team)
