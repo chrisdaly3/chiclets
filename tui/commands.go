@@ -53,15 +53,42 @@ func (ui *UIModel) GetTeamInfoCmd() tea.Msg {
 	}
 
 	// ROSTER COLLECTION from NHL API
-	TotalPlayerCount := gjson.GetBytes(responseBody, "teams.0.roster.roster.#")
+	forwardsCount := gjson.GetBytes(responseBody, "forwards.#")
+	defensemenCount := gjson.GetBytes(responseBody, "defensemen.#")
+	goaliesCount := gjson.GetBytes(responseBody, "goalies.#")
 	var allPlayers []gjson.Result
 	var PlayerRows [][]string
 
-	for i := 0; int64(i) < TotalPlayerCount.Int(); i++ {
+	for i := 0; int64(i) < forwardsCount.Int(); i++ {
 		playerFields := fmt.Sprintf(
-			"{teams.0.roster.roster.%v.person.id,teams.0.roster.roster.%v.person.fullName,teams.0.roster.roster.%v.position.name,teams.0.roster.roster.%v.jerseyNumber}.@join",
+			"{forwards.%d.id,\"firstName\":forwards.%d.firstName.default,\"lastName\":forwards.%d.lastName.default,forwards.%d.positionCode,forwards.%d.sweaterNumber}",
 			i, // PlayerId
-			i, // PlayerName
+			i, // PlayerFirstName
+			i, // PlayerLastName
+			i, // PlayerPosition
+			i, // PlayerNumber
+		)
+		player := gjson.GetBytes(responseBody, playerFields)
+		allPlayers = append(allPlayers, player)
+	}
+	for i := 0; int64(i) < defensemenCount.Int(); i++ {
+		playerFields := fmt.Sprintf(
+			"{defensemen.%d.id,\"firstName\":defensemen.%d.firstName.default,\"lastName\":defensemen.%d.lastName.default,defensemen.%d.positionCode,defensemen.%d.sweaterNumber}",
+			i, // PlayerId
+			i, // PlayerFirstName
+			i, // PlayerLastName
+			i, // PlayerPosition
+			i, // PlayerNumber
+		)
+		player := gjson.GetBytes(responseBody, playerFields)
+		allPlayers = append(allPlayers, player)
+	}
+	for i := 0; int64(i) < goaliesCount.Int(); i++ {
+		playerFields := fmt.Sprintf(
+			"{goalies.%d.id,\"firstName\":goalies.%d.firstName.default,\"lastName\":goalies.%d.lastName.default,goalies.%d.positionCode,goalies.%d.sweaterNumber}",
+			i, // PlayerId
+			i, // PlayerFirstName
+			i, // PlayerLastName
 			i, // PlayerPosition
 			i, // PlayerNumber
 		)
@@ -70,94 +97,20 @@ func (ui *UIModel) GetTeamInfoCmd() tea.Msg {
 	}
 	for _, p := range allPlayers {
 		player := p.Map()
-		playerColumn := []string{player["id"].String(), player["fullName"].String(), player["name"].String(), player["jerseyNumber"].String()}
+		playerColumn := []string{player["id"].String(), player["firstName"].String() + " " + player["lastName"].String(), player["positionCode"].String(), player["sweaterNumber"].String()}
 		PlayerRows = append(PlayerRows, playerColumn)
 	}
 
 	playerTable := NewTeamTable(PlayerRows)
-	prevGame := ui.GetPreviousCmd()
-	nextGame := ui.GetNextCmd()
 	teamStandings := ui.GetRecordCmd()
 
 	// Returns a message to the UI to update the table view
-	return constants.TeamInfoMessage{Table: playerTable, TeamPriorGame: prevGame, TeamNextGame: nextGame, TeamStats: teamStandings}
-}
-
-func (ui *UIModel) GetPreviousCmd() map[string]gjson.Result {
-	id := ui.table.GetCursorValue()
-	requestPath := fmt.Sprintf(constants.LASTGAME, id)
-
-	response, err := http.Get(requestPath)
-	if err != nil {
-		fmt.Printf("Error communicating with NHL API: %v", err)
-	}
-	defer response.Body.Close()
-	if response.StatusCode > 299 {
-		slog.Error("Unhealthy Response", "response:", response.Body, "statusCode:", response.StatusCode)
-	}
-
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		slog.Error("Read Error", "err:", err)
-		os.Exit(1)
-	}
-
-	previousGame := gjson.GetBytes(responseBody, "{teams.0.previousGameSchedule.dates.0.date,teams.0.previousGameSchedule.dates.0.games.0.teams,teams.0.previousGameSchedule.dates.0.games.0.venue.name}.@join")
-	awayTeam := gjson.Result.Get(previousGame, "{teams.away.team.name,teams.away.score}").Map()
-	homeTeam := gjson.Result.Get(previousGame, "{teams.home.team.name,teams.home.score}").Map()
-
-	prevGameMap := make(map[string]gjson.Result)
-	prevGameMap["date"] = previousGame.Map()["date"]
-	prevGameMap["away"] = awayTeam["name"]
-	prevGameMap["awayScore"] = awayTeam["score"]
-	prevGameMap["home"] = homeTeam["name"]
-	prevGameMap["homeScore"] = homeTeam["score"]
-
-	return prevGameMap
-}
-
-// TODO: Setup next game and team record calls + parsers
-func (ui *UIModel) GetNextCmd() map[string]gjson.Result {
-	id := ui.table.GetCursorValue()
-	requestPath := fmt.Sprintf(constants.NEXTGAME, id)
-
-	response, err := http.Get(requestPath)
-	if err != nil {
-		fmt.Printf("Error communicating with NHL API: %v", err)
-	}
-	defer response.Body.Close()
-	if response.StatusCode > 299 {
-		slog.Error("Unhealthy Response", "response:", response.Body, "statusCode:", response.StatusCode)
-	}
-
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		slog.Error("Read Error", "err:", err)
-		os.Exit(1)
-	}
-
-	upcomingGame := gjson.GetBytes(responseBody, "{teams.0.nextGameSchedule.dates.0.date,teams.0.nextGameSchedule.dates.0.games.0.teams,teams.0.nextGameSchedule.dates.0.games.0.venue.name}.@join")
-	awayTeam := gjson.Result.Get(upcomingGame, "{teams.away.team.name,teams.away.leagueRecord.wins,teams.away.leagueRecord.losses,teams.away.leagueRecord.ot}").Map()
-	homeTeam := gjson.Result.Get(upcomingGame, "{teams.home.team.name,teams.home.leagueRecord.wins,teams.home.leagueRecord.losses,teams.home.leagueRecord.ot}").Map()
-
-	nextGameMap := make(map[string]gjson.Result)
-	nextGameMap["date"] = upcomingGame.Map()["date"]
-	nextGameMap["away"] = awayTeam["name"]
-	nextGameMap["awayWins"] = awayTeam["wins"]
-	nextGameMap["awayLosses"] = awayTeam["losses"]
-	nextGameMap["awayOTL"] = awayTeam["ot"]
-	nextGameMap["home"] = homeTeam["name"]
-	nextGameMap["homeWins"] = homeTeam["wins"]
-	nextGameMap["homeLosses"] = homeTeam["losses"]
-	nextGameMap["homeOTL"] = homeTeam["ot"]
-
-	return nextGameMap
-
+	return constants.TeamInfoMessage{Table: playerTable, TeamStats: teamStandings}
 }
 
 func (ui *UIModel) GetRecordCmd() map[string]gjson.Result {
 	id := ui.table.GetCursorValue()
-	requestPath := constants.STANDINGSURL
+	requestPath := constants.TEAMSURL
 
 	response, err := http.Get(requestPath)
 	if err != nil {
@@ -174,23 +127,25 @@ func (ui *UIModel) GetRecordCmd() map[string]gjson.Result {
 		os.Exit(1)
 	}
 
-	records := gjson.GetBytes(responseBody, fmt.Sprintf("records.#.teamRecords.#(team.id == %v )", id))
-	name := gjson.Result.Get(records, "0.team.name")
-	points := gjson.Result.Get(records, "0.points")
-	gamesPlayed := gjson.Result.Get(records, "0.gamesPlayed")
-	divRank := gjson.Result.Get(records, "0.divisionRank")
-	streak := gjson.Result.Get(records, "0.streak.streakCode")
-	regWins := gjson.Result.Get(records, "0.regulationWins")
-	row := gjson.Result.Get(records, "0.row")
-	goalsFor := gjson.Result.Get(records, "0.goalsScored")
-	goalsAgainst := gjson.Result.Get(records, "0.goalsAgainst")
+	records := gjson.GetBytes(responseBody, fmt.Sprintf("standings.#(teamAbbrev.default==%v)", id))
+	name := gjson.Result.Get(records, "teamName.default")
+	points := gjson.Result.Get(records, "points")
+	gamesPlayed := gjson.Result.Get(records, "gamesPlayed")
+	divRank := gjson.Result.Get(records, "divisionSequence")
+	streakCode := gjson.Result.Get(records, "streakCode")
+	streakCount := gjson.Result.Get(records, "streakCount")
+	regWins := gjson.Result.Get(records, "regulationWins")
+	row := gjson.Result.Get(records, "regulationPlusOtWins")
+	goalsFor := gjson.Result.Get(records, "goalFor")
+	goalsAgainst := gjson.Result.Get(records, "goalAgainst")
 
 	recordsMap := make(map[string]gjson.Result)
 	recordsMap["teamName"] = name
 	recordsMap["points"] = points
 	recordsMap["gamesPlayed"] = gamesPlayed
 	recordsMap["divRank"] = divRank
-	recordsMap["streak"] = streak
+	recordsMap["streakCode"] = streakCode
+	recordsMap["streakCount"] = streakCount
 	recordsMap["regWins"] = regWins
 	recordsMap["row"] = row
 	recordsMap["goalsFor"] = goalsFor
@@ -206,12 +161,12 @@ func GetLeagueCmd() tea.Msg {
 
 func (ui *UIModel) GetPlayerCmd() tea.Msg {
 	id := ui.table.GetCursorValue()
-	stats := getPlayerStats(id)
-	return constants.PlayerMessage{Player: stats}
+	name, stats := getPlayerStats(id)
+	return constants.PlayerMessage{PlayerName: name, Player: stats}
 }
 
 // getPlayerStats is a helper function to obtain stats for the selected player
-func getPlayerStats(id string) map[string]gjson.Result {
+func getPlayerStats(id string) (name, stats map[string]gjson.Result) {
 	requestPath := fmt.Sprintf(constants.PLAYERURL, id)
 
 	response, err := http.Get(requestPath)
@@ -230,6 +185,7 @@ func getPlayerStats(id string) map[string]gjson.Result {
 	}
 
 	//PLAYER STAT COLLECTION from NHL API
-	playerResponse := gjson.GetBytes(responseBody, "stats.0.splits.0.stat.@pretty")
-	return playerResponse.Map()
+	playerNameResponse := gjson.GetBytes(responseBody, "{\"firstName\":firstName.default,\"lastName\":lastName.default}")
+	playerStatsResponse := gjson.GetBytes(responseBody, "featuredStats.regularSeason.subSeason")
+	return playerNameResponse.Map(), playerStatsResponse.Map()
 }

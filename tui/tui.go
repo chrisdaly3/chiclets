@@ -2,7 +2,6 @@ package tui
 
 import (
 	"fmt"
-	//"runtime"
 	"unicode"
 
 	"github.com/76creates/stickers/flexbox"
@@ -90,42 +89,21 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		//update top flexbox rows with Team Information for the season
-		var teamStatsMessage = fmt.Sprintf("\nTEAM STATS\n\n%s\n\nPoints: %v   |   Division Rank: %v\nGames Played: %v   |   Current Streak: %v\nRegulation Wins: %v   |   ROW: %v\nGoals For: %v   |   Goals Against: %v",
+		var teamStatsMessage = fmt.Sprintf("\nTEAM STATS\n\n%s\n\nPoints: %v   |   Division Rank: %v\nGames Played: %v   |   Current Streak: %v%v\nRegulation Wins: %v   |   ROW: %v\nGoals For: %v   |   Goals Against: %v",
 			msg.TeamStats["teamName"],
 			msg.TeamStats["points"],
 			msg.TeamStats["divRank"],
 			msg.TeamStats["gamesPlayed"],
-			msg.TeamStats["streak"],
+			msg.TeamStats["streakCode"],
+			msg.TeamStats["streakCount"],
 			msg.TeamStats["regWins"],
 			msg.TeamStats["row"],
 			msg.TeamStats["goalsFor"],
 			msg.TeamStats["goalsAgainst"],
 		)
-		var lastGameMessage = fmt.Sprintf("\nPREVIOUS GAME\n\nDate: %v\nAway Team: %v\nScore: %v\nHome Team: %v\nScore: %v",
-			msg.TeamPriorGame["date"],
-			msg.TeamPriorGame["away"],
-			msg.TeamPriorGame["awayScore"].Int(),
-			msg.TeamPriorGame["home"],
-			msg.TeamPriorGame["homeScore"].Int(),
-		)
-		var nextGameMessage = fmt.Sprintf("\nNEXT GAME\n\nDate: %v\nAway Team: %v\n\tWins: %v\tLosses: %v\tOTL: %v\n\nHome Team: %v\n\tWins: %v\tLosses: %v\tOTL: %v",
-			msg.TeamNextGame["date"],
-			msg.TeamNextGame["away"],
-			msg.TeamNextGame["awayWins"].Int(),
-			msg.TeamNextGame["awayLosses"].Int(),
-			msg.TeamNextGame["awayOTL"].Int(),
-			msg.TeamNextGame["home"],
-			msg.TeamNextGame["homeWins"].Int(),
-			msg.TeamNextGame["homeLosses"].Int(),
-			msg.TeamNextGame["homeOTL"].Int(),
-		)
 
 		seasonCell := ui.flex.GetRow(0).GetCell(1)
 		seasonCell.SetContent(teamStatsMessage)
-		priorGameCell := ui.flex.GetRow(0).GetCell(0)
-		priorGameCell.SetContent(lastGameMessage)
-		nextGameCell := ui.flex.GetRow(0).GetCell(2)
-		nextGameCell.SetContent(nextGameMessage)
 
 	case constants.LeagueMessage:
 		if ui.view == teamNav {
@@ -145,35 +123,39 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		statCell := ui.flex.GetRow(1).GetCell(2)
 
 		//Player Stat block content
-		var playerStatsMessage = fmt.Sprintf("\n\nCURRENT SEASON\n\nGames Played: %v\nGoals: %v\nAssists: %v\n+/-: %v\nPenalty Minutes: %v\nPower Play Goals: %v\nPower Play Pts: %v\nShort-hand Goals: %v\nShort-hand Points: %v\nOvertime Goals: %v\nGame-winning Goals: %v\nShots: %v\nShot Pct: %.3f",
-			msg.Player["games"].Int(),
+		var playerStatsMessage = fmt.Sprintf("\n\n%v %v\n\nGames Played: %v\nGoals: %v\nAssists: %v\nPoints: %v\n+/-: %v\nPenalty Minutes: %v\nPower Play Goals: %v\nShort-hand Goals: %v\nOvertime Goals: %v\nGame-winning Goals: %v\nShots: %v\nShot Pct: %.3f",
+			msg.PlayerName["firstName"].Str,
+			msg.PlayerName["lastName"].Str,
+			msg.Player["gamesPlayed"].Int(),
 			msg.Player["goals"].Int(),
 			msg.Player["assists"].Int(),
+			msg.Player["points"].Int(),
 			msg.Player["plusMinus"].Int(),
 			msg.Player["pim"].Int(),
 			msg.Player["powerPlayGoals"].Int(),
-			msg.Player["powerPlayPoints"].Int(),
-			msg.Player["shortHandedGoals"].Int(),
-			msg.Player["shortHandedPoints"].Int(),
-			msg.Player["overTimeGoals"].Int(),
+			msg.Player["shorthandedGoals"].Int(),
+			msg.Player["otGoals"].Int(),
 			msg.Player["gameWinningGoals"].Int(),
 			msg.Player["shots"].Int(),
-			msg.Player["shotPct"].Float())
+			msg.Player["shootingPctg"].Float())
 
 		//Goalie Stat block content
-		var goalieStatsMessage = fmt.Sprintf("\n\nCURRENT SEASON\n\nGames Played: %v\nShots Against: %v\nSaves: %v\nGA: %v\nSave Pct: %.3f\nGoals Allowed/Gm: %.3f\nShutouts: %v",
-			msg.Player["games"].Int(),
-			msg.Player["shotsAgainst"].Int(),
-			msg.Player["saves"].Int(),
-			msg.Player["goalsAgainst"].Int(),
-			msg.Player["savePercentage"].Float(),
-			msg.Player["goalAgainstAverage"].Float(),
+		var goalieStatsMessage = fmt.Sprintf("\n\n%v %v\n\nGames Played: %v\nWins: %v\nLosses: %v\nTies: %v\nOT Losses: %v\nShutouts: %v\nGoals Against Avg: %.3f\nSave Percentage: %.3f",
+			msg.PlayerName["firstName"].Str,
+			msg.PlayerName["lastName"].Str,
+			msg.Player["gamesPlayed"].Int(),
+			msg.Player["wins"].Int(),
+			msg.Player["losses"].Int(),
+			msg.Player["ties"].Int(),
+			msg.Player["otLosses"].Int(),
 			msg.Player["shutouts"].Int(),
+			msg.Player["goalsAgainstAvg"].Float(),
+			msg.Player["savePctg"].Float(),
 		)
 
 		if ui.statsDisplayed == false {
 			ui.statsDisplayed = true
-			if _, ok := msg.Player["saves"]; ok {
+			if _, ok := msg.Player["savePctg"]; ok {
 				statCell.SetContent(goalieStatsMessage)
 			} else {
 				statCell.SetContent(playerStatsMessage)
@@ -182,7 +164,7 @@ func (ui *UIModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else if ui.statsDisplayed == true {
 			ui.statsDisplayed = false
 			statCell.SetContent("")
-			if _, ok := msg.Player["saves"]; ok {
+			if _, ok := msg.Player["savePctg"]; ok {
 				statCell.SetContent(goalieStatsMessage)
 			} else {
 				statCell.SetContent(playerStatsMessage)

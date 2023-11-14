@@ -10,10 +10,8 @@ type SelectionMessage struct {
 }
 
 type TeamInfoMessage struct {
-	Table         *table.TableSingleType[string]
-	TeamStats     map[string]gjson.Result
-	TeamPriorGame map[string]gjson.Result
-	TeamNextGame  map[string]gjson.Result
+	Table     *table.TableSingleType[string]
+	TeamStats map[string]gjson.Result
 }
 
 type LeagueMessage struct {
@@ -21,5 +19,6 @@ type LeagueMessage struct {
 }
 
 type PlayerMessage struct {
-	Player map[string]gjson.Result
+	PlayerName map[string]gjson.Result
+	Player     map[string]gjson.Result
 }
